@@ -102,7 +102,7 @@ public class EncodeUtil {
 			String type = "forecast_v";
 			String appid = "c2ffc8e63c5b40ca";
 			String appid_six = "c2ffc8";
-			String key = "0244f8_SmartWeatherAPI_5e9551e";
+			String private_key = "0244f8_SmartWeatherAPI_5e9551e";
 			
 			Date dt=new Date();//如果不需要格式,可直接用dt,dt就是当前系统时间
 			DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");//设置显示格式
@@ -112,16 +112,16 @@ public class EncodeUtil {
 			
 			
 			// 需要加密的数据
-			String data = "http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid;
+			String public_key = "http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid;
 			// 密钥
 		//	String key = "0244f8_SmartWeatherAPI_5e9551e";
 
-			String publicKey = standardURLEncoder(data, key);
+			String key = standardURLEncoder(public_key, private_key);
 //			
 //			String data2 = "http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six;
 //			
 //			System.out.println(str);
-			url="http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six+"&key="+publicKey;
+			url="http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six+"&key="+key;
 
 		} catch (Exception e) {
 			e.printStackTrace();
