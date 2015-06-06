@@ -96,39 +96,4 @@ public class EncodeUtil {
 		return to.toString();
 	}
 
-	public EncodeUtil() {
-		try {
-			String areaid = "101010100";
-			String type = "forecast_v";
-			String appid = "c2ffc8e63c5b40ca";
-			String appid_six = "c2ffc8";
-			String private_key = "0244f8_SmartWeatherAPI_5e9551e";
-			
-			Date dt=new Date();//如果不需要格式,可直接用dt,dt就是当前系统时间
-			DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");//设置显示格式
-			String nowTime="";
-			nowTime= df.format(dt);//用DateFormat的format()方法在dt中获取并以yyyy/MM/dd HH:mm:ss格式显示
-			System.out.println("nowTime:"+nowTime);
-			
-			
-			// 需要加密的数据
-			String public_key = "http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid;
-			// 密钥
-		//	String key = "0244f8_SmartWeatherAPI_5e9551e";
-
-			String key = standardURLEncoder(public_key, private_key);
-//			
-//			String data2 = "http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six;
-//			
-//			System.out.println(str);
-			url="http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six+"&key="+key;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	// AppId：c2ffc8e63c5b40ca
-	// Private_Key：0244f8_SmartWeatherAPI_5e9551e
-//	lWTMWq3QRJyLstvvvv6So0DBkQ0%3D
-//	hPZf1%2F5Ag%2F4JS2A%2BcYmpj5Yv2YA%3D
 }
