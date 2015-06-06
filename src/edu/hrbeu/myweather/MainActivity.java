@@ -1,8 +1,6 @@
 package edu.hrbeu.myweather;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -143,7 +140,8 @@ public class MainActivity extends Activity {
 		temperature.setText(myWeather.temperatureD[0]);
 		windD.setText(myWeather.windDD[0]);
 		windP.setText(myWeather.windPD[0]);
-		//phenomena.setBackground(getResources().getDrawable(DWeatherArray[myWeather.weatherD[0]]));
+		
+		phenomena.setBackgroundDrawable(getResources().getDrawable(DWeatherArray[Integer.parseInt(myWeather.weatherN[0])]));
 	}
 
 	public Weather getWeather(String strResult) {
