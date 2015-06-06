@@ -36,8 +36,14 @@ public class MainActivity extends Activity {
 	TextView windD;
 	TextView windP;
 	ImageView phenomena;
+	String url;
 	
-	int[] DWeatherArray = {R.drawable.n00,R.drawable.n01,R.drawable.n02,R.drawable.n03,R.drawable.n04};
+	int[] DWeatherArray = {R.drawable.n00,R.drawable.n01,R.drawable.n02,R.drawable.n03,R.drawable.n04,R.drawable.n05,
+			R.drawable.n06,R.drawable.n07,R.drawable.n08,R.drawable.n09,R.drawable.n10,
+			R.drawable.n11,R.drawable.n12,R.drawable.n13,R.drawable.n14,R.drawable.n15,
+			R.drawable.n16,R.drawable.n17,R.drawable.n18,R.drawable.n19,R.drawable.n20,
+			R.drawable.n21,R.drawable.n22,R.drawable.n23,R.drawable.n24,R.drawable.n25,
+			R.drawable.n26,R.drawable.n27,R.drawable.n28,R.drawable.n29,R.drawable.n30,R.drawable.n31,R.drawable.n53};
 
 
 	@Override
@@ -69,7 +75,7 @@ public class MainActivity extends Activity {
 //		String data2 = "http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six;
 //		
 //		System.out.println(str);
-		String url="http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six+"&key="+key;
+		url="http://open.weather.com.cn/data/?areaid="+areaid+"&type="+type+"&date="+nowTime+"&appid="+appid_six+"&key="+key;
 		
 		
 
@@ -82,9 +88,7 @@ public class MainActivity extends Activity {
 		phenomena = (ImageView)findViewById(R.id.phenomena);
 		// TextView city = (TextView)findViewById(R.id.city);
 
-		jd = new EncodeUtil();
 
-		System.out.println(jd.url);
 
 		Thread newThread; // 声明一个子线程
 
@@ -96,7 +100,7 @@ public class MainActivity extends Activity {
 					// 创建一个默认的HttpClient
 					HttpClient httpclient = new DefaultHttpClient();
 					// 创建一个GET请求
-					HttpGet request = new HttpGet(jd.url);
+					HttpGet request = new HttpGet(url);
 					// 发送GET请求，并将响应内容转换成字符串
 					String response = httpclient.execute(request,
 							new BasicResponseHandler());
@@ -139,7 +143,7 @@ public class MainActivity extends Activity {
 		temperature.setText(myWeather.temperatureD[0]);
 		windD.setText(myWeather.windDD[0]);
 		windP.setText(myWeather.windPD[0]);
-		//phenomena(getResources().getDrawable(DWeatherArray[weather.weatherD[0]]));
+		//phenomena.setBackground(getResources().getDrawable(DWeatherArray[myWeather.weatherD[0]]));
 	}
 
 	public Weather getWeather(String strResult) {
