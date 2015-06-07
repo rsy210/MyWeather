@@ -22,7 +22,7 @@ public class Weather {
 	public String[] windPD = new String[3];// fg
 	public String[] windPN = new String[3];// fh
 	
-	public String[] suntime = new String[3];// fi
+	public String[] sunrise = new String[3];// fi
 	public String[] sundown = new String[3];// 
 
 
