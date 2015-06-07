@@ -15,12 +15,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,6 +41,7 @@ public class MainActivity extends Activity {
 	ImageView phenomena;
 	String url;
 	Date dt;
+	Button citybutton;
 
 	private TextView weather_condition;
 	String[] WeatherCondition = { "晴", "多云", " 阴", " 阵雨", " 雷阵雨", " 雷阵雨伴有冰雹",
@@ -43,6 +49,11 @@ public class MainActivity extends Activity {
 			" 中雪", " 大雪", " 暴雪", " 雾", " 冻雨", " 沙尘暴", " 小到中雨", " 中到大雨",
 			" 大到暴雨", " 暴雨到大暴雨", " 大暴雨到特大暴雨", " 小到中雪", " 中到大雪", " 大到暴雪", " 浮尘",
 			" 扬沙", " 强沙尘暴", " 霾", " 无" };
+	String[] windDirect = { "无持续风向", "东北风", "东风", "东南风", "南风", "西南风", "西风",
+			"西北风", "北风", "旋转风" };
+	String[] windPower = { "微风", "3-4级", "4-5级", "5-6级", "6-7级", "7-8级",
+			"8-9级", "9-10级", "10-11级", "11-12级" };
+
 	int[] DWeatherArray = { R.drawable.d00, R.drawable.d01, R.drawable.d02,
 			R.drawable.d03, R.drawable.d04, R.drawable.d05, R.drawable.d06,
 			R.drawable.d07, R.drawable.d08, R.drawable.d09, R.drawable.d10,
@@ -103,6 +114,18 @@ public class MainActivity extends Activity {
 		phenomena = (ImageView) findViewById(R.id.phenomena);
 		// TextView city = (TextView)findViewById(R.id.city);
 		weather_condition = (TextView) findViewById(R.id.weather_condition);
+		citybutton = (Button) findViewById(R.id.citybutton);
+
+		citybutton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this,
+						CityActivity.class);
+				startActivity(intent);
+			}
+		});
 
 		Thread newThread; // 声明一个子线程
 

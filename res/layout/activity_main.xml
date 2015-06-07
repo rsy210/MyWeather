@@ -16,6 +16,12 @@
         android:text="北京"
         android:textSize="16sp" />
 
+    <Button
+        android:id="@+id/citybutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
