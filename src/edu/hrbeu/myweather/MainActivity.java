@@ -36,9 +36,9 @@ public class MainActivity extends Activity {
 	ImageView phenomena;
 	String url;
 	Date dt;
-	
+
 	private TextView weather_condition;
-	String[] WeatherCondition = { "晴","多云", " 阴", " 阵雨", " 雷阵雨", " 雷阵雨伴有冰雹",
+	String[] WeatherCondition = { "晴", "多云", " 阴", " 阵雨", " 雷阵雨", " 雷阵雨伴有冰雹",
 			" 雨夹雪", " 小雨", " 中雨", " 大雨", " 暴雨", " 大暴雨", " 特大暴雨", " 阵雪", " 小雪",
 			" 中雪", " 大雪", " 暴雪", " 雾", " 冻雨", " 沙尘暴", " 小到中雨", " 中到大雨",
 			" 大到暴雨", " 暴雨到大暴雨", " 大暴雨到特大暴雨", " 小到中雪", " 中到大雪", " 大到暴雪", " 浮尘",
@@ -67,6 +67,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		// 载入数据库
+		copyDataBaseToPhone();
 
 		String areaid = "101010100";
 		String type = "forecast_v";
@@ -153,13 +155,13 @@ public class MainActivity extends Activity {
 		city.setText(myWeather.city);
 		date.setText(myWeather.date);
 		temperature.setText(myWeather.temperatureD[0]);
-		
-		//分隔出日出日落时间sunrises，sundowns(字符串格式)
-		String[] suntimes = myWeather.suntime[0].split("\\|",2);
-		String sunrises,sundowns;
+
+		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
+		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
+		String sunrises, sundowns;
 		sunrises = suntimes[0];
 		sundowns = suntimes[1];
-		//转换为时间格式 
+		// 转换为时间格式
 		DateFormat sundf = new SimpleDateFormat("HH:mm");
 		Date sunrise = null;
 		Date sundown = null;
@@ -170,11 +172,11 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//白天晚上的参数不同，通过日出日落时间进行判读输出
+
+		// 白天晚上的参数不同，通过日出日落时间进行判读输出
 		boolean flag1 = dt.after(sunrise);
 		boolean flag2 = dt.before(sundown);
-		if(flag1 && flag2){
+		if (flag1 && flag2) {
 			windD.setText(myWeather.windDD[0]);
 			windP.setText(myWeather.windPD[0]);
 
@@ -183,7 +185,7 @@ public class MainActivity extends Activity {
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherD[0])]);
-		}else {
+		} else {
 			windD.setText(myWeather.windDN[0]);
 			windP.setText(myWeather.windPN[0]);
 
@@ -263,5 +265,22 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	// //////////////////////////////////
+	private void copyDataBaseToPhone() {
+		DBUtil util = new DBUtil(this);
+		// 判断数据库是否存在
+		boolean dbExist = util.checkDataBase();
+
+		if (dbExist) {
+			Log.i("tag", "The database is exist.");
+		} else {// 不存在就把raw里的数据库写入手机
+			try {
+				util.copyDataBase();
+			} catch (IOException e) {
+				throw new Error("Error copying database");
+			}
+		}
 	}
 }
