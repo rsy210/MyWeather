@@ -1,6 +1,9 @@
 package edu.hrbeu.myweather;
 
+import java.io.IOException;
+
 import android.app.Activity;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +14,21 @@ public class CityActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_city);
+
+		DBUtil myDbHelper = new DBUtil(null);
+		myDbHelper = new DBUtil(this);
+
+		try {
+			myDbHelper.createDataBase();
+		} catch (IOException ioe) {
+			throw new Error("Unable to create database");
+		}
+		try {
+			myDbHelper.openDataBase();
+		} catch (SQLException sqle) {
+			throw sqle;
+		}
+
 	}
 
 	@Override

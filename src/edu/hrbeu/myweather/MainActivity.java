@@ -78,8 +78,6 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		// 载入数据库
-		copyDataBaseToPhone();
 
 		String areaid = "101010100";
 		String type = "forecast_v";
@@ -288,22 +286,5 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	// //////////////////////////////////
-	private void copyDataBaseToPhone() {
-		DBUtil util = new DBUtil(this);
-		// 判断数据库是否存在
-		boolean dbExist = util.checkDataBase();
-
-		if (dbExist) {
-			Log.i("tag", "The database is exist.");
-		} else {// 不存在就把raw里的数据库写入手机
-			try {
-				util.copyDataBase();
-			} catch (IOException e) {
-				throw new Error("Error copying database");
-			}
-		}
 	}
 }
