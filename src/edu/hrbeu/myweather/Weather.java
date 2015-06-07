@@ -20,8 +20,10 @@ public class Weather {
 	public String[] windDN = new String[3];// ff
 
 	public String[] windPD = new String[3];// fg
-
 	public String[] windPN = new String[3];// fh
+	
+	public String[] sunrise = new String[3];// fi
+	public String[] sundown = new String[3];// 
 
 
 }
