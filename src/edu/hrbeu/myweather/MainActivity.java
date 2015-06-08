@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,6 +43,7 @@ public class MainActivity extends Activity {
 	String url;
 	Date dt;
 	Button citybutton;
+	SharedPreferences sp;
 
 	private TextView weather_condition;
 	String[] WeatherCondition = { "«Á", "∂‡‘∆", " “ı", " ’Û”Í", " ¿◊’Û”Í", " ¿◊’Û”Í∞È”–±˘±¢",
@@ -79,7 +81,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		String areaid = "101010100";
+		sp = getSharedPreferences("mycity", MODE_PRIVATE);
+		String areaid = sp.getString("citycode", "101010100");
+		
+		//String areaid = "101010100";
 		String type = "forecast_v";
 		String appid = "c2ffc8e63c5b40ca";
 		String appid_six = "c2ffc8";
@@ -103,6 +108,9 @@ public class MainActivity extends Activity {
 				+ type + "&date=" + nowTime + "&appid=" + appid_six + "&key="
 				+ key;
 
+		
+		
+		
 		city = (TextView) findViewById(R.id.city);
 
 		date = (TextView) findViewById(R.id.date);

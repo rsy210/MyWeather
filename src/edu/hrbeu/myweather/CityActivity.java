@@ -3,20 +3,39 @@ package edu.hrbeu.myweather;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 public class CityActivity extends Activity {
+
+	EditText searchcity;
+	Button searchbutton;
+	ListView listview;
+	SharedPreferences sp;
+	DBUtil myDbHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_city);
 
-		//DBUtil myDbHelper = new DBUtil(null);
-		DBUtil myDbHelper = new DBUtil(this);
+		sp = getSharedPreferences("mycity", MODE_PRIVATE);
+
+		searchcity = (EditText) findViewById(R.id.searchcity);
+		searchbutton = (Button) findViewById(R.id.searchbutton);
+		
+
+		// DBUtil myDbHelper = new DBUtil(null);
+	myDbHelper = new DBUtil(this);
 
 		try {
 			myDbHelper.createDataBase();
@@ -29,10 +48,24 @@ public class CityActivity extends Activity {
 			throw sqle;
 		}
 
-		
-		//查询函数，正常返回string，没有则返回null
-		//myDbHelper.queryOneData("哈尔滨");
-		
+		searchbutton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				// 查询函数，正常返回string，没有则返回null
+				String citycode = myDbHelper.queryOneData(searchcity.getText()
+						.toString());
+
+				Editor ed = sp.edit();
+				ed.putString(citycode, searchcity.getText()
+						.toString());
+				ed.commit();
+				finish();
+			}
+		});
+
+
 	}
 
 	@Override

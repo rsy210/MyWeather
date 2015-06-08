@@ -26,8 +26,13 @@
             android:imeOptions="actionSearch"
             android:singleLine="true" >
 
-            <requestFocus />
         </EditText>
+
+        <Button
+            android:id="@+id/searchbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择城市" />
 
         <ListView
             android:id="@android:id/list"
