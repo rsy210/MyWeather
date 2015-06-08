@@ -58,8 +58,7 @@ public class CityActivity extends Activity {
 						.toString());
 
 				Editor ed = sp.edit();
-				ed.putString(citycode, searchcity.getText()
-						.toString());
+				ed.putString("citycode", citycode);
 				ed.commit();
 				finish();
 			}

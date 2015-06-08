@@ -84,6 +84,7 @@ public class MainActivity extends Activity {
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		String areaid = sp.getString("citycode", "101010100");
 		
+		
 		//String areaid = "101010100";
 		String type = "forecast_v";
 		String appid = "c2ffc8e63c5b40ca";
@@ -107,9 +108,6 @@ public class MainActivity extends Activity {
 		url = "http://open.weather.com.cn/data/?areaid=" + areaid + "&type="
 				+ type + "&date=" + nowTime + "&appid=" + appid_six + "&key="
 				+ key;
-
-		
-		
 		
 		city = (TextView) findViewById(R.id.city);
 
@@ -164,6 +162,9 @@ public class MainActivity extends Activity {
 		newThread.start(); // Æô¶¯Ïß³Ì
 
 	}
+	
+	
+	
 
 	private Handler myHandler = new Handler() {
 
