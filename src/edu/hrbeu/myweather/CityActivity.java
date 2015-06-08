@@ -15,8 +15,8 @@ public class CityActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_city);
 
-		DBUtil myDbHelper = new DBUtil(null);
-		myDbHelper = new DBUtil(this);
+		//DBUtil myDbHelper = new DBUtil(null);
+		DBUtil myDbHelper = new DBUtil(this);
 
 		try {
 			myDbHelper.createDataBase();
@@ -29,6 +29,10 @@ public class CityActivity extends Activity {
 			throw sqle;
 		}
 
+		
+		//查询函数，正常返回string，没有则返回null
+		//myDbHelper.queryOneData("哈尔滨");
+		
 	}
 
 	@Override

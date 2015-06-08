@@ -136,19 +136,23 @@ public class DBUtil extends SQLiteOpenHelper {
 		super.close();
 
 	}
-	
-	  public String queryOneData(long id) {  
-		  
-		  
-		  Cursor cursor =   myDataBase.rawQuery("select * from person where areaid="+id, null);
-		  
-//		  Cursor results =  db.query(DB_TABLE, new String[] { KEY_ID, KEY_NAME, KEY_AGE, KEY_HEIGHT}, 
-//				  KEY_ID + "=" + id, null, null, null, null);
-		 String results = cursor.getString(3);
-		  
-		  return results;   
-		  
-	  }
+
+	// ²éÑ¯Êý¾Ý
+	public String queryOneData(String name) {
+
+		Cursor cursor = myDataBase.rawQuery(
+				"select * from areaid_v where NAMECN ='" + name + "'", null);
+
+		int resultCounts = cursor.getCount();
+		if (resultCounts == 0 || !cursor.moveToFirst()) {
+			return null;
+		}
+
+		String results = cursor.getString(cursor.getColumnIndex("AREAID"));
+
+		return results;
+
+	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
