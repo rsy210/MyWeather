@@ -130,7 +130,19 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		getWeatherDate();
+	}
 
+	 
+	
+	public void getWeatherDate() { 
 		Thread newThread; // 声明一个子线程
 
 		newThread = new Thread(new Runnable() {
@@ -160,11 +172,9 @@ public class MainActivity extends Activity {
 			}
 		});
 		newThread.start(); // 启动线程
+		}
 
-	}
-	
-	
-	
+
 
 	private Handler myHandler = new Handler() {
 
