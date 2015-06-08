@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -83,9 +82,8 @@ public class MainActivity extends Activity {
 
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		String areaid = sp.getString("citycode", "101010100");
-		
-		
-		//String areaid = "101010100";
+
+		// String areaid = "101010100";
 		String type = "forecast_v";
 		String appid = "c2ffc8e63c5b40ca";
 		String appid_six = "c2ffc8";
@@ -108,7 +106,7 @@ public class MainActivity extends Activity {
 		url = "http://open.weather.com.cn/data/?areaid=" + areaid + "&type="
 				+ type + "&date=" + nowTime + "&appid=" + appid_six + "&key="
 				+ key;
-		
+
 		city = (TextView) findViewById(R.id.city);
 
 		date = (TextView) findViewById(R.id.date);
@@ -130,19 +128,18 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		
+
 	}
-	
+
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 		getWeatherDate();
+		System.out.println("onResume");
 	}
 
-	 
-	
-	public void getWeatherDate() { 
+	public void getWeatherDate() {
 		Thread newThread; // 声明一个子线程
 
 		newThread = new Thread(new Runnable() {
@@ -172,9 +169,7 @@ public class MainActivity extends Activity {
 			}
 		});
 		newThread.start(); // 启动线程
-		}
-
-
+	}
 
 	private Handler myHandler = new Handler() {
 
@@ -194,7 +189,8 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		city.setText(myWeather.city);
 		date.setText(myWeather.date);
-		temperature.setText(myWeather.temperatureD[0]);
+
+		
 
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
@@ -213,10 +209,26 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		// 白天晚上的参数不同，通过日出日落时间进行判读输出
-		boolean flag1 = dt.after(sunrise);
-		boolean flag2 = dt.before(sundown);
-		if (flag1 && flag2) {
+		
+		//////////////////////////////////////////////
+		Date dt = new Date();// 如果不需要格式,可直接用dt,dt就是当前系统时间
+		DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");// 设置显示格式
+		String nowTime = df.format(dt);// 用DateFormat的format()方法在dt中获取并以yyyy/MM/dd
+										// HH:mm:ss格式显示201506051830
+				
+		int hh = dt.getHours();
+		Boolean dayflag = true;
+		if (hh >= 18 || hh < 8)
+			dayflag = false;
+		
+		
+		
+		////////////////////////////////////////////////	
+		
+//		// 白天晚上的参数不同，通过日出日落时间进行判读输出
+//		boolean flag1 = now.after(sunrise);
+//		boolean flag2 = now.before(sundown);
+		if (dayflag) {
 			windD.setText(myWeather.windDD[0]);
 			windP.setText(myWeather.windPD[0]);
 
@@ -225,6 +237,7 @@ public class MainActivity extends Activity {
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherD[0])]);
+			temperature.setText(myWeather.temperatureD[0]);
 		} else {
 			windD.setText(myWeather.windDN[0]);
 			windP.setText(myWeather.windPN[0]);
@@ -234,6 +247,7 @@ public class MainActivity extends Activity {
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherN[0])]);
+			temperature.setText(myWeather.temperatureN[0]);
 		}
 	}
 

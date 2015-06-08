@@ -3,6 +3,7 @@ package edu.hrbeu.myweather;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.SQLException;
@@ -60,7 +61,10 @@ public class CityActivity extends Activity {
 				Editor ed = sp.edit();
 				ed.putString("citycode", citycode);
 				ed.commit();
-				finish();
+
+				Intent intent = new Intent(CityActivity.this,MainActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
 			}
 		});
 
