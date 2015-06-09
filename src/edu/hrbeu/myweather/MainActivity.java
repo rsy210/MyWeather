@@ -29,21 +29,17 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-public class MainActivity extends Activity implements OnGestureListener{
-	
-	// 定义一个GestureDetector(手势识别类)对象的引用
-		private GestureDetector myGestureDetector;   
 
-	 
+public class MainActivity extends Activity implements OnGestureListener, OnTouchListener {
+
+	// 定义一个GestureDetector(手势识别类)对象的引用
+	private GestureDetector myGestureDetector;
+
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
 
@@ -57,6 +53,9 @@ public class MainActivity extends Activity implements OnGestureListener{
 	Date dt;
 	Button citybutton;
 	SharedPreferences sp;
+
+	// 定义一个ViewFlipper对象的引用
+	ViewFlipper myViewFlipper;
 
 	private TextView weather_condition;
 	String[] WeatherCondition = { "晴", "多云", " 阴", " 阵雨", " 雷阵雨", " 雷阵雨伴有冰雹",
@@ -94,50 +93,34 @@ public class MainActivity extends Activity implements OnGestureListener{
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-////////////////////////////////////////////////////////////////
+		// //////////////////////////////////////////////////////////////
 		// 重点，将Context对象传入LayoutInflater.from()里，得到LayoutInflater对象
 		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
+
+		// 用inflate(渲染)方法将布局文件变为View对象
+		View view_today = factory.inflate(R.layout.view_today, null);
+		View view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
+		View view_aftertomorrow = factory.inflate(R.layout.view_aftertomorrow,
+				null);
 		
-		// 用inflate(渲染)方法将布局文件变为View对象  
-        View view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);  
-        View view_aftertomorrow = factory.inflate(R.layout.view_aftertomorrow, null);  
-       // View third = factory.inflate(R.layout.thirdscrollview, null);
-        
-        
-     // 定义一个ViewFlipper对象的引用
-    	ViewFlipper myViewFlipper;
-     // 绑定inflate控件，否则无法使用它  
-        myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
-		
-     // 用addView方法将生成的View对象加入到ViewFlipper对象中
-     		myViewFlipper.addView(view_tomorrow );
-     		myViewFlipper.addView(view_aftertomorrow);
-     		//myViewFlipper.addView(third);
-    	 	// MainActivity继承了OnGestureListener接口
-    		myGestureDetector = new GestureDetector(this);
-    		
-    		// 设置识别长按手势，这样才能实现拖动
-    		myViewFlipper.setLongClickable(true);
-    		
-    		
-    		
-    		// 实现OnFling方法，就可以利用滑动的起始坐标识别出左右滑动的手势，并处理
-//    		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-//    				float velocityY){
-//    			// 参数e1是按下事件，e2是放开事件，剩下两个是滑动的速度分量，这里用不到
-//    			// 按下时的横坐标大于放开时的横坐标，从右向左滑动
-//    			if (e1.getX() > e2.getX()) {
-//    				myViewFlipper.showNext();
-//    			}
-//    			// 按下时的横坐标小于放开时的横坐标，从左向右滑动
-//    			else if (e1.getX() < e2.getX()) {
-//    				myViewFlipper.showPrevious();
-//    			}
-//    			
-//    		}
-        
-        
-        /////////////////////////////////////////////////////////////////////
+
+		// 绑定inflate控件，否则无法使用它
+		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
+
+		// 用addView方法将生成的View对象加入到ViewFlipper对象中
+		myViewFlipper.addView(view_today);
+		myViewFlipper.addView(view_tomorrow);
+		myViewFlipper.addView(view_aftertomorrow);
+		 
+		 
+		 
+		// MainActivity继承了OnGestureListener接口
+		myGestureDetector = new GestureDetector(this);
+		// 设置识别长按手势，这样才能实现拖动
+		myViewFlipper.setLongClickable(true);
+		// MainActivity继承了OnTouchListener接口   对myViewFlipper设置触屏事件监听器
+        myViewFlipper.setOnTouchListener(this);  
+		// ///////////////////////////////////////////////////////////////////
 
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		String areaid = sp.getString("citycode", "101010100");
@@ -189,6 +172,8 @@ public class MainActivity extends Activity implements OnGestureListener{
 		});
 
 	}
+	
+
 
 	@Override
 	protected void onResume() {
@@ -384,7 +369,7 @@ public class MainActivity extends Activity implements OnGestureListener{
 	@Override
 	public void onShowPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -403,13 +388,39 @@ public class MainActivity extends Activity implements OnGestureListener{
 	@Override
 	public void onLongPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	@Override
+	// @Override
+	// public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+	// float velocityY) {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+
+	// 实现OnFling方法，就可以利用滑动的起始坐标识别出左右滑动的手势，并处理
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		// TODO Auto-generated method stub
+		// 参数e1是按下事件，e2是放开事件，剩下两个是滑动的速度分量，这里用不到
+		// 按下时的横坐标大于放开时的横坐标，从右向左滑动
+		if (e1.getX() > e2.getX()) {
+			myViewFlipper.showNext();
+		}
+		// 按下时的横坐标小于放开时的横坐标，从左向右滑动
+		else if (e1.getX() < e2.getX()) {
+			myViewFlipper.showPrevious();
+		}
+		RefreshWeather();
 		return false;
+	}
+
+	
+	/* 
+	 * 实现OnTouchListener接口中的onTouch()方法，当View上发生触屏时间时调用，传如一个View和一个运动事件event，我们将 
+	 * 这个event传给OnGestureListener接口的onTouchEvent()方法处理，这样我们的OnFling()就能工作了 
+	 */ 
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {  
+	    return myGestureDetector.onTouchEvent(event);  
 	}
 }
