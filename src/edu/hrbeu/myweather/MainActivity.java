@@ -21,8 +21,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -30,8 +34,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+public class MainActivity extends Activity implements OnGestureListener{
+	
+	// 定义一个GestureDetector(手势识别类)对象的引用
+		private GestureDetector myGestureDetector;   
 
-public class MainActivity extends Activity {
+	 
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
 
@@ -82,6 +94,50 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
+////////////////////////////////////////////////////////////////
+		// 重点，将Context对象传入LayoutInflater.from()里，得到LayoutInflater对象
+		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
+		
+		// 用inflate(渲染)方法将布局文件变为View对象  
+        View view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);  
+        View view_aftertomorrow = factory.inflate(R.layout.view_aftertomorrow, null);  
+       // View third = factory.inflate(R.layout.thirdscrollview, null);
+        
+        
+     // 定义一个ViewFlipper对象的引用
+    	ViewFlipper myViewFlipper;
+     // 绑定inflate控件，否则无法使用它  
+        myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
+		
+     // 用addView方法将生成的View对象加入到ViewFlipper对象中
+     		myViewFlipper.addView(view_tomorrow );
+     		myViewFlipper.addView(view_aftertomorrow);
+     		//myViewFlipper.addView(third);
+    	 	// MainActivity继承了OnGestureListener接口
+    		myGestureDetector = new GestureDetector(this);
+    		
+    		// 设置识别长按手势，这样才能实现拖动
+    		myViewFlipper.setLongClickable(true);
+    		
+    		
+    		
+    		// 实现OnFling方法，就可以利用滑动的起始坐标识别出左右滑动的手势，并处理
+//    		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+//    				float velocityY){
+//    			// 参数e1是按下事件，e2是放开事件，剩下两个是滑动的速度分量，这里用不到
+//    			// 按下时的横坐标大于放开时的横坐标，从右向左滑动
+//    			if (e1.getX() > e2.getX()) {
+//    				myViewFlipper.showNext();
+//    			}
+//    			// 按下时的横坐标小于放开时的横坐标，从左向右滑动
+//    			else if (e1.getX() < e2.getX()) {
+//    				myViewFlipper.showPrevious();
+//    			}
+//    			
+//    		}
+        
+        
+        /////////////////////////////////////////////////////////////////////
 
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		String areaid = sp.getString("citycode", "101010100");
@@ -317,5 +373,43 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
