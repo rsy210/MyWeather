@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -78,6 +80,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_main);
 
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
@@ -190,8 +193,6 @@ public class MainActivity extends Activity {
 		city.setText(myWeather.city);
 		date.setText(myWeather.date);
 
-		
-
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
 		String sunrises, sundowns;
@@ -209,25 +210,22 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		
-		//////////////////////////////////////////////
+		// ////////////////////////////////////////////
 		Date dt = new Date();// 如果不需要格式,可直接用dt,dt就是当前系统时间
 		DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");// 设置显示格式
 		String nowTime = df.format(dt);// 用DateFormat的format()方法在dt中获取并以yyyy/MM/dd
 										// HH:mm:ss格式显示201506051830
-				
+
 		int hh = dt.getHours();
 		Boolean dayflag = true;
 		if (hh >= 18 || hh < 8)
 			dayflag = false;
-		
-		
-		
-		////////////////////////////////////////////////	
-		
-//		// 白天晚上的参数不同，通过日出日落时间进行判读输出
-//		boolean flag1 = now.after(sunrise);
-//		boolean flag2 = now.before(sundown);
+
+		// //////////////////////////////////////////////
+
+		// // 白天晚上的参数不同，通过日出日落时间进行判读输出
+		// boolean flag1 = now.after(sunrise);
+		// boolean flag2 = now.before(sundown);
 		if (dayflag) {
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[0])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPD[0])]);
