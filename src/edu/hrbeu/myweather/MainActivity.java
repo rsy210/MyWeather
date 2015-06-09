@@ -229,8 +229,8 @@ public class MainActivity extends Activity {
 //		boolean flag1 = now.after(sunrise);
 //		boolean flag2 = now.before(sundown);
 		if (dayflag) {
-			windD.setText(myWeather.windDD[0]);
-			windP.setText(myWeather.windPD[0]);
+			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[0])]);
+			windP.setText(windPower[Integer.parseInt(myWeather.windPD[0])]);
 
 			phenomena.setBackgroundDrawable(getResources().getDrawable(
 					DWeatherArray[Integer.parseInt(myWeather.weatherD[0])]));
@@ -239,8 +239,8 @@ public class MainActivity extends Activity {
 					.parseInt(myWeather.weatherD[0])]);
 			temperature.setText(myWeather.temperatureD[0]);
 		} else {
-			windD.setText(myWeather.windDN[0]);
-			windP.setText(myWeather.windPN[0]);
+			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[0])]);
+			windP.setText(windPower[Integer.parseInt(myWeather.windPN[0])]);
 
 			phenomena.setBackgroundDrawable(getResources().getDrawable(
 					DWeatherArray[Integer.parseInt(myWeather.weatherN[0])]));
