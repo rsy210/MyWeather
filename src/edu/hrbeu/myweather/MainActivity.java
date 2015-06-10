@@ -88,6 +88,12 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 			R.drawable.n27, R.drawable.n28, R.drawable.n29, R.drawable.n30,
 			R.drawable.n31, R.drawable.n53 };
 
+	private View view_today;
+
+	private View view_tomorrow;
+
+	private View view_aftertomorrow;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,9 +104,9 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
 
 		// 用inflate(渲染)方法将布局文件变为View对象
-		View view_today = factory.inflate(R.layout.view_today, null);
-		View view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
-		View view_aftertomorrow = factory.inflate(R.layout.view_aftertomorrow,
+		 view_today = factory.inflate(R.layout.view_today, null);
+		 view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
+		 view_aftertomorrow = factory.inflate(R.layout.view_aftertomorrow,
 				null);
 		
 
@@ -215,6 +221,15 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		newThread.start(); // 启动线程
 	}
 
+	public void changeview (View view)
+	{
+		temperature = (TextView) view.findViewById(R.id.temperature);
+		windD = (TextView) view.findViewById(R.id.windD);
+		windP = (TextView) view.findViewById(R.id.windP);
+		phenomena = (ImageView) view.findViewById(R.id.phenomena);
+		// TextView city = (TextView)findViewById(R.id.city);
+		weather_condition = (TextView) view.findViewById(R.id.weather_condition);
+	}
 	private Handler myHandler = new Handler() {
 
 		@Override
@@ -223,13 +238,18 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 			// if (msg.what == UpdateTextView) {
 			// showText.setText("sub thread update UI");// 更新界面显示
 			// }
-			RefreshWeather();
+			changeview(view_today);
+			RefreshWeather(0);
+			changeview(view_tomorrow);
+			RefreshWeather(1);
+			changeview(view_aftertomorrow);
+			RefreshWeather(2);
 			super.handleMessage(msg);
 
 		}
 	};
 
-	public void RefreshWeather() {
+	public void RefreshWeather(int i) {
 		// TODO Auto-generated method stub
 		city.setText(myWeather.city);
 		date.setText(myWeather.date);
@@ -268,25 +288,25 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		// boolean flag1 = now.after(sunrise);
 		// boolean flag2 = now.before(sundown);
 		if (dayflag) {
-			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[0])]);
-			windP.setText(windPower[Integer.parseInt(myWeather.windPD[0])]);
+			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[i])]);
+			windP.setText(windPower[Integer.parseInt(myWeather.windPD[i])]);
 
 			phenomena.setBackgroundDrawable(getResources().getDrawable(
-					DWeatherArray[Integer.parseInt(myWeather.weatherD[0])]));
+					DWeatherArray[Integer.parseInt(myWeather.weatherD[i])]));
 
 			weather_condition.setText(WeatherCondition[Integer
-					.parseInt(myWeather.weatherD[0])]);
-			temperature.setText(myWeather.temperatureD[0]);
+					.parseInt(myWeather.weatherD[i])]);
+			temperature.setText(myWeather.temperatureD[i]);
 		} else {
-			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[0])]);
-			windP.setText(windPower[Integer.parseInt(myWeather.windPN[0])]);
+			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
+			windP.setText(windPower[Integer.parseInt(myWeather.windPN[i])]);
 
 			phenomena.setBackgroundDrawable(getResources().getDrawable(
-					DWeatherArray[Integer.parseInt(myWeather.weatherN[0])]));
+					DWeatherArray[Integer.parseInt(myWeather.weatherN[i])]));
 
 			weather_condition.setText(WeatherCondition[Integer
-					.parseInt(myWeather.weatherN[0])]);
-			temperature.setText(myWeather.temperatureN[0]);
+					.parseInt(myWeather.weatherN[i])]);
+			temperature.setText(myWeather.temperatureN[i]);
 		}
 	}
 
@@ -410,7 +430,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		else if (e1.getX() < e2.getX()) {
 			myViewFlipper.showPrevious();
 		}
-		RefreshWeather();
+		
 		return false;
 	}
 
