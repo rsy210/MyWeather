@@ -421,14 +421,17 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 	// 实现OnFling方法，就可以利用滑动的起始坐标识别出左右滑动的手势，并处理
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
+		int page = 0;
 		// 参数e1是按下事件，e2是放开事件，剩下两个是滑动的速度分量，这里用不到
 		// 按下时的横坐标大于放开时的横坐标，从右向左滑动
-		if (e1.getX() > e2.getX()) {
+		if ((e1.getX() > e2.getX()) && (page < 2) ) {
 			myViewFlipper.showNext();
+			page += 1;		
 		}
 		// 按下时的横坐标小于放开时的横坐标，从左向右滑动
-		else if (e1.getX() < e2.getX()) {
+		else if ((e1.getX() < e2.getX()) && (page > 0)) {
 			myViewFlipper.showPrevious();
+			page -= 1;
 		}
 		
 		return false;
