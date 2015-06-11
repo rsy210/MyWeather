@@ -11,6 +11,7 @@ import java.util.Date;
 
 
 
+
 import edu.hrbeu.myweather.SlideMenu;
 import edu.hrbeu.myweather.R;
 
@@ -55,6 +56,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 
 	TextView city;
 	TextView date;
+	TextView viewday;
 	TextView temperature;
 	TextView windD;
 	TextView windP;
@@ -154,7 +156,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		String private_key = "0244f8_SmartWeatherAPI_5e9551e";
 
 		dt = new Date();// 如果不需要格式,可直接用dt,dt就是当前系统时间
-		DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");// 设置显示格式
+		DateFormat df = new SimpleDateFormat("MM月dd日");// 设置显示格式
 		String nowTime = "";
 		nowTime = df.format(dt);// 用DateFormat的format()方法在dt中获取并以yyyy/MM/dd
 								// HH:mm:ss格式显示
@@ -174,12 +176,12 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		city = (TextView) findViewById(R.id.city);
 
 		date = (TextView) findViewById(R.id.date);
-		temperature = (TextView) findViewById(R.id.temperature);
+		/*temperature = (TextView) findViewById(R.id.temperature);
 		windD = (TextView) findViewById(R.id.windD);
 		windP = (TextView) findViewById(R.id.windP);
 		phenomena = (ImageView) findViewById(R.id.phenomena);
 		// TextView city = (TextView)findViewById(R.id.city);
-		weather_condition = (TextView) findViewById(R.id.weather_condition);
+		weather_condition = (TextView) findViewById(R.id.weather_condition);*/
 		citybutton = (Button) findViewById(R.id.citybutton); 
 
 		
@@ -240,6 +242,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 
 	public void changeview (View view)
 	{
+		viewday = (TextView) view.findViewById(R.id.viewday);
 		temperature = (TextView) view.findViewById(R.id.temperature);
 		windD = (TextView) view.findViewById(R.id.windD);
 		windP = (TextView) view.findViewById(R.id.windP);
@@ -270,6 +273,9 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		// TODO Auto-generated method stub
 		city.setText(myWeather.city);
 		date.setText(myWeather.date);
+		
+		String viewdays = getDateStr(i) ;
+		viewday.setText(viewdays);
 
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
@@ -377,7 +383,26 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		}
 		return null;
 	}
-
+public void viewday(){
+	String[] viewdays = null ;		
+	for (int i=0;i<3;i++){
+		viewdays[i]=getDateStr(i);
+}
+	}
+/*    * 获取指定日后 后 dayAddNum 天的 日期  
+    * @param day  日期，格式为String："2013-9-3";  
+    * @param dayAddNum 增加天数 格式为int;  
+    * @return  
+     */ 
+   public  String getDateStr(int dayAddNum) {  
+       SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
+       Date nowDate = new Date();   
+       Date newDate2 = new Date(nowDate.getTime() + dayAddNum * 24 * 60 * 60 * 1000);  
+       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+       String dateOk = simpleDateFormat.format(newDate2);  
+       return dateOk;  
+   } 
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
