@@ -176,6 +176,19 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		weather_condition = (TextView) findViewById(R.id.weather_condition);
 		citybutton = (Button) findViewById(R.id.citybutton);
 
+		Button btn = (Button) findViewById(R.id.citybutton);
+		btn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this,
+						CityActivity.class);
+				startActivity(intent);
+			}
+		});
+
+		
 		citybutton.setOnClickListener(new OnClickListener() {
 
 			@Override
