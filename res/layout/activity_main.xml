@@ -15,7 +15,7 @@
         android:layout_height="fill_parent" >
 
         <include layout="@layout/layout_menu" />
-        </edu.hrbeu.myweather.SlideMenu>>
+       
     
     <ViewFlipper
         android:id="@+id/myViewFlipper"
@@ -42,6 +42,6 @@
         
         
         
-     
+      </edu.hrbeu.myweather.SlideMenu>
 
 </LinearLayout>
