@@ -6,12 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-
-
-
-
-
 import edu.hrbeu.myweather.SlideMenu;
 import edu.hrbeu.myweather.R;
 
@@ -44,11 +38,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-public class MainActivity extends Activity implements OnGestureListener, OnTouchListener {
+public class MainActivity extends Activity implements OnGestureListener,
+		OnTouchListener {
 
 	// 定义一个GestureDetector(手势识别类)对象的引用
 	private GestureDetector myGestureDetector;
-/*	private PageControlView pageControl;*/
+	/* private PageControlView pageControl; */
 	private SlideMenu slideMenu;
 
 	EncodeUtil jd;
@@ -62,11 +57,10 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 	TextView windP;
 	ImageView phenomena;
 	String url;
-	Date dt;
+
 	Button citybutton;
-	SharedPreferences sp;
-	
-	int page = 0;//onfling 用于记录滑动页数，用于取消循环滑动
+
+	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
 
 	// 定义一个ViewFlipper对象的引用
 	ViewFlipper myViewFlipper;
@@ -118,73 +112,43 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
 
 		// 用inflate(渲染)方法将布局文件变为View对象
-		 view_today = factory.inflate(R.layout.view_today, null);
-		 view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
-		 view_afterday = factory.inflate(R.layout.view_afterday,
-				null);
-		
+		view_today = factory.inflate(R.layout.view_today, null);
+		view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
+		view_afterday = factory.inflate(R.layout.view_afterday, null);
 
 		// 绑定inflate控件，否则无法使用它
 		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
-		
-	/*	pageControl = (PageControlView) findViewById(R.id.);*/
+
+		/* pageControl = (PageControlView) findViewById(R.id.); */
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
 
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
 		myViewFlipper.addView(view_tomorrow);
 		myViewFlipper.addView(view_afterday);
-		 
-		 
-		 
+
 		// MainActivity继承了OnGestureListener接口
 		myGestureDetector = new GestureDetector(this);
 		// 设置识别长按手势，这样才能实现拖动
 		myViewFlipper.setLongClickable(true);
-		// MainActivity继承了OnTouchListener接口   对myViewFlipper设置触屏事件监听器
-        myViewFlipper.setOnTouchListener(this);  
-        myViewFlipper.setDisplayedChild(0);
+		// MainActivity继承了OnTouchListener接口 对myViewFlipper设置触屏事件监听器
+		myViewFlipper.setOnTouchListener(this);
+		myViewFlipper.setDisplayedChild(0);
 		// ///////////////////////////////////////////////////////////////////
 
+		// 获取URL
+		SharedPreferences sp;
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		String areaid = sp.getString("citycode", "101010100");
-
-		// String areaid = "101010100";
-		String type = "forecast_v";
-		String appid = "c2ffc8e63c5b40ca";
-		String appid_six = "c2ffc8";
-		String private_key = "0244f8_SmartWeatherAPI_5e9551e";
-
-		dt = new Date();// 如果不需要格式,可直接用dt,dt就是当前系统时间
-		DateFormat df = new SimpleDateFormat("MM月dd日");// 设置显示格式
-		String nowTime = "";
-		nowTime = df.format(dt);// 用DateFormat的format()方法在dt中获取并以yyyy/MM/dd
-								// HH:mm:ss格式显示
-		System.out.println("nowTime:" + nowTime);
-
-		// 需要加密的数据
-		String public_key = "http://open.weather.com.cn/data/?areaid=" + areaid
-				+ "&type=" + type + "&date=" + nowTime + "&appid=" + appid;
-
-		String key = EncodeUtil.standardURLEncoder(public_key, private_key);
-
-		// System.out.println(str);
-		url = "http://open.weather.com.cn/data/?areaid=" + areaid + "&type="
-				+ type + "&date=" + nowTime + "&appid=" + appid_six + "&key="
-				+ key;
+		url = EncodeUtil.getUrl(areaid);
+		// ////////////////////////////////////////////////////////////////
 
 		city = (TextView) findViewById(R.id.city);
 
 		date = (TextView) findViewById(R.id.date);
-		/*temperature = (TextView) findViewById(R.id.temperature);
-		windD = (TextView) findViewById(R.id.windD);
-		windP = (TextView) findViewById(R.id.windP);
-		phenomena = (ImageView) findViewById(R.id.phenomena);
-		// TextView city = (TextView)findViewById(R.id.city);
-		weather_condition = (TextView) findViewById(R.id.weather_condition);*/
-		citybutton = (Button) findViewById(R.id.citybutton); 
 
-		
+		citybutton = (Button) findViewById(R.id.citybutton);
+
 		citybutton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -197,8 +161,6 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		});
 
 	}
-	
-
 
 	@Override
 	protected void onResume() {
@@ -220,6 +182,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 					HttpClient httpclient = new DefaultHttpClient();
 					// 创建一个GET请求
 					HttpGet request = new HttpGet(url);
+					Log.v("response text", url);
 					// 发送GET请求，并将响应内容转换成字符串
 					String response = httpclient.execute(request,
 							new BasicResponseHandler());
@@ -240,16 +203,17 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		newThread.start(); // 启动线程
 	}
 
-	public void changeview (View view)
-	{
+	public void changeview(View view) {
 		viewday = (TextView) view.findViewById(R.id.viewday);
 		temperature = (TextView) view.findViewById(R.id.temperature);
 		windD = (TextView) view.findViewById(R.id.windD);
 		windP = (TextView) view.findViewById(R.id.windP);
 		phenomena = (ImageView) view.findViewById(R.id.phenomena);
 		// TextView city = (TextView)findViewById(R.id.city);
-		weather_condition = (TextView) view.findViewById(R.id.weather_condition);
+		weather_condition = (TextView) view
+				.findViewById(R.id.weather_condition);
 	}
+
 	private Handler myHandler = new Handler() {
 
 		@Override
@@ -273,8 +237,8 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		// TODO Auto-generated method stub
 		city.setText(myWeather.city);
 		date.setText(myWeather.date);
-		
-		String viewdays = getDateStr(i) ;
+
+		String viewdays = getDateStr(i);
 		viewday.setText(viewdays);
 
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
@@ -383,26 +347,33 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		}
 		return null;
 	}
-public void viewday(){
-	String[] viewdays = null ;		
-	for (int i=0;i<3;i++){
-		viewdays[i]=getDateStr(i);
-}
+
+	public void viewday() {
+		String[] viewdays = null;
+		for (int i = 0; i < 3; i++) {
+			viewdays[i] = getDateStr(i);
+		}
 	}
-/*    * 获取指定日后 后 dayAddNum 天的 日期  
-    * @param day  日期，格式为String："2013-9-3";  
-    * @param dayAddNum 增加天数 格式为int;  
-    * @return  
-     */ 
-   public  String getDateStr(int dayAddNum) {  
-       SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
-       Date nowDate = new Date();   
-       Date newDate2 = new Date(nowDate.getTime() + dayAddNum * 24 * 60 * 60 * 1000);  
-       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  
-       String dateOk = simpleDateFormat.format(newDate2);  
-       return dateOk;  
-   } 
-	
+
+	/*
+	 *  * 获取指定日后 后 dayAddNum 天的 日期
+	 * 
+	 * @param day 日期，格式为String："2013-9-3";
+	 * 
+	 * @param dayAddNum 增加天数 格式为int;
+	 * 
+	 * @return
+	 */
+	public String getDateStr(int dayAddNum) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Date nowDate = new Date();
+		Date newDate2 = new Date(nowDate.getTime() + dayAddNum * 24 * 60 * 60
+				* 1000);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String dateOk = simpleDateFormat.format(newDate2);
+		return dateOk;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -463,29 +434,28 @@ public void viewday(){
 	// 实现OnFling方法，就可以利用滑动的起始坐标识别出左右滑动的手势，并处理
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		
+
 		// 参数e1是按下事件，e2是放开事件，剩下两个是滑动的速度分量，这里用不到
 		// 按下时的横坐标大于放开时的横坐标，从右向左滑动
-		if ((e1.getX() > e2.getX()) && (page < 2) ) {
+		if ((e1.getX() > e2.getX()) && (page < 2)) {
 			myViewFlipper.showNext();
-			page += 1;		
+			page += 1;
 		}
 		// 按下时的横坐标小于放开时的横坐标，从左向右滑动
 		else if ((e1.getX() < e2.getX()) && (page > 0)) {
 			myViewFlipper.showPrevious();
 			page -= 1;
 		}
-		
+
 		return false;
 	}
 
-	
-	/* 
-	 * 实现OnTouchListener接口中的onTouch()方法，当View上发生触屏时间时调用，传如一个View和一个运动事件event，我们将 
-	 * 这个event传给OnGestureListener接口的onTouchEvent()方法处理，这样我们的OnFling()就能工作了 
-	 */ 
+	/*
+	 * 实现OnTouchListener接口中的onTouch()方法，当View上发生触屏时间时调用，传如一个View和一个运动事件event，我们将
+	 * 这个event传给OnGestureListener接口的onTouchEvent()方法处理，这样我们的OnFling()就能工作了
+	 */
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {  
-	    return myGestureDetector.onTouchEvent(event);  
+	public boolean onTouch(View v, MotionEvent event) {
+		return myGestureDetector.onTouchEvent(event);
 	}
 }

@@ -1,13 +1,12 @@
 package edu.hrbeu.myweather;
 
-import javax.crypto.Mac;
-
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class EncodeUtil {
@@ -94,6 +93,38 @@ public class EncodeUtil {
 			}
 		}
 		return to.toString();
+	}
+	
+	public static String getUrl(String areaid)
+	{
+		String url = "";
+
+		String type = "forecast_v";
+		String appid = "c2ffc8e63c5b40ca";
+		String appid_six = "c2ffc8";
+		String private_key = "0244f8_SmartWeatherAPI_5e9551e";
+		
+		Date dt;
+		dt = new Date();// 如果不需要格式,可直接用dt,dt就是当前系统时间
+		DateFormat df = new SimpleDateFormat("yyyyMMdd");// 设置显示格式
+		String nowTime = "";
+		nowTime = df.format(dt);// 用DateFormat的format()方法在dt中获取并以yyyy/MM/dd
+								// HH:mm:ss格式显示
+		
+		System.out.println("nowTime:" + nowTime);
+
+		// 需要加密的数据
+		String public_key = "http://open.weather.com.cn/data/?areaid=" + areaid
+				+ "&type=" + type + "&date=" + nowTime + "&appid=" + appid;
+
+		String key = standardURLEncoder(public_key, private_key);
+
+		
+		url = "http://open.weather.com.cn/data/?areaid=" + areaid + "&type="
+				+ type + "&date=" + nowTime + "&appid=" + appid_six + "&key="
+				+ key;
+		
+		return url;
 	}
 
 }
