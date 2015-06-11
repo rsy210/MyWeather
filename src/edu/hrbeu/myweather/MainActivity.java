@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 
 	private View view_tomorrow;
 
-	private View view_aftertomorrow;
+	private View view_afterday;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +108,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		// 用inflate(渲染)方法将布局文件变为View对象
 		 view_today = factory.inflate(R.layout.view_today, null);
 		 view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
-		 view_aftertomorrow = factory.inflate(R.layout.view_aftertomorrow,
+		 view_afterday = factory.inflate(R.layout.view_afterday,
 				null);
 		
 
@@ -118,7 +118,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
 		myViewFlipper.addView(view_tomorrow);
-		myViewFlipper.addView(view_aftertomorrow);
+		myViewFlipper.addView(view_afterday);
 		 
 		 
 		 
@@ -245,7 +245,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 			RefreshWeather(0);
 			changeview(view_tomorrow);
 			RefreshWeather(1);
-			changeview(view_aftertomorrow);
+			changeview(view_afterday);
 			RefreshWeather(2);
 			super.handleMessage(msg);
 

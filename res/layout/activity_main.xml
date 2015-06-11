@@ -12,6 +12,24 @@
     <ViewFlipper
         android:id="@+id/myViewFlipper"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent" >
+    
+    <include layout="@layout/view_today" />  
+  
+        <include layout="@layout/view_tomorrow" />  
+  
+        <include layout="@layout/view_afterday" />  
+  
+    </ViewFlipper>  
+    
+    <com.xyz.vvv.PageControlView  
+        android:id="@+id/viewflipper_indicator"  
+        android:layout_width="fill_parent"  
+        android:layout_height="wrap_content"  
+        android:layout_marginBottom="25dip"  
+        android:gravity="center_horizontal"  
+        android:layout_alignParentBottom="true"  
+        xyz:cell_width="@dimen/indicator_width"  
+        xyz:cell_height="@dimen/indicator_height" />  
 
 </LinearLayout>
