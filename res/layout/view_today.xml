@@ -3,15 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-        <TextView
-        android:layout_width="wrap_content"
+
+    <TextView
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:text="今天"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textSize="16sp" />
-    
- <TextView
+
+    <TextView
         android:id="@+id/city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,18 +30,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="预报日期"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -99,6 +94,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp" />
-    
-    
+
 </LinearLayout>

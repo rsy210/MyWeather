@@ -9,6 +9,11 @@ import java.util.Date;
 
 
 
+
+
+import edu.hrbeu.myweather.SlideMenu;
+import edu.hrbeu.myweather.R;
+
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -43,6 +48,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 	// 定义一个GestureDetector(手势识别类)对象的引用
 	private GestureDetector myGestureDetector;
 /*	private PageControlView pageControl;*/
+	private SlideMenu slideMenu;
 
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
@@ -120,7 +126,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 		
 	/*	pageControl = (PageControlView) findViewById(R.id.);*/
-		
+		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
 
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
@@ -174,19 +180,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 		phenomena = (ImageView) findViewById(R.id.phenomena);
 		// TextView city = (TextView)findViewById(R.id.city);
 		weather_condition = (TextView) findViewById(R.id.weather_condition);
-		citybutton = (Button) findViewById(R.id.citybutton);
-
-		Button btn = (Button) findViewById(R.id.citybutton);
-		btn.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(MainActivity.this,
-						CityActivity.class);
-				startActivity(intent);
-			}
-		});
+		citybutton = (Button) findViewById(R.id.citybutton); 
 
 		
 		citybutton.setOnClickListener(new OnClickListener() {

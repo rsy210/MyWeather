@@ -13,9 +13,9 @@
         android:id="@+id/slide_menu"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-        <include layout="@layout/slidemenu" />
-        
-           </edu.hrbeu.myweather.SlideMenu>
+
+        <include layout="@layout/layout_menu" />
+        </edu.hrbeu.myweather.SlideMenu>>
     
     <ViewFlipper
         android:id="@+id/myViewFlipper"
