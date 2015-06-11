@@ -6,6 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
+
+
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -39,6 +42,7 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 
 	// 定义一个GestureDetector(手势识别类)对象的引用
 	private GestureDetector myGestureDetector;
+/*	private PageControlView pageControl;*/
 
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
@@ -114,6 +118,9 @@ public class MainActivity extends Activity implements OnGestureListener, OnTouch
 
 		// 绑定inflate控件，否则无法使用它
 		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
+		
+	/*	pageControl = (PageControlView) findViewById(R.id.);*/
+		
 
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
