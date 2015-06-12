@@ -9,354 +9,124 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
+import android.view.GestureDetector;
+
 
 public class SlideMenu extends ViewGroup {
-	public static final int SCREEN_MENU = 0;
-	public static final int SCREEN_MAIN = 1;
-	private static final int SCREEN_INVALID = -1;
-	
-	private int mCurrentScreen;
-	private int mNextScreen = SCREEN_INVALID;
 
-	private Scroller mScroller;
-	private VelocityTracker mVelocityTracker;
-	private int mTouchSlop;
-	
-	private float mLastMotionX;
-	private float mLastMotionY;
+        private Scroller scroller;//用于模拟数据
+        private final int MENU = 0;//侧边栏
+        private final int MAIN = 1;//主界面
+        private int currentScreen = MENU;//当前界面，默认为主界面
+        private int startx;//手指按下时，第一个点距离屏幕左边缘的距离
+        //带两个参数的构造函数，可以布局文件中使用
+        public SlideMenu(Context context, AttributeSet attrs) {
+                super(context, attrs);
+                scroller = new Scroller(context);//初始化
+        }
 
-	private final static int TOUCH_STATE_REST = 0;
-	private final static int TOUCH_STATE_SCROLLING = 1;
-	private static final int SNAP_VELOCITY = 1000;
+        //因为这个自定义控件是继承的ViewGroup  在布局文件中又包含了两个子布局
+        //因此在显示的时候，需要先测量，然后在布局，然后才能显示出来
+        //该方法就是测量子布局的方法
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                // TODO Auto-generated method stub
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                
+                View menu = getChildAt(0);//找到侧边栏
+                menu.measure(menu.getLayoutParams().width, heightMeasureSpec);//测量，参数一是宽度，在这里是获得子布局文件中写死的那个宽度
+                View main = getChildAt(1);//获得主界面
+                main.measure(widthMeasureSpec, heightMeasureSpec);//主界面宽高设为与父布局宽高一致
+        }
+        
+        //将两个子布局进行布局
+        @Override
+        protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                // TODO Auto-generated method stub
+                View menu = getChildAt(0);//得到侧边栏
+                menu.layout(-menu.getLayoutParams().width, t, 0, b);//设置控件的四边，侧边栏默认设置为显示在屏幕的左边缘外
+                View main = getChildAt(1);//得到主界面
+                main.layout(l, t, r, b);//主界面默认填充屏幕
+        }
 
-	public int mTouchState = TOUCH_STATE_REST;
-	private boolean mLocked;
-	private boolean mAllowLongPress;
+        //触摸事件
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+                switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                        startx = (int) event.getX();//记录手指按下时，点到屏幕左边的距离
+                        break;
+                case MotionEvent.ACTION_MOVE:
+                        int movex = (int) event.getX();//移动后，手指点到屏幕左边的距离
+                        int diffx = startx - movex;//屏幕左边的偏移量
+                        int newscrollx =getScrollX()+diffx;//偏移后
+                        if(newscrollx>0){
+                                scrollTo(0, 0);//如果屏幕左边超过了主界面左边，那么让屏幕左边与主界面重合
+                        }else if(newscrollx<-getChildAt(0).getWidth()){
+                                scrollTo(-getChildAt(0).getWidth(), 0);//如果屏幕左边超过了侧边栏左边，那么让屏幕左边与侧边栏左边重合
+                        }
+                        scrollBy(diffx, 0);//持续偏移
+                        startx = movex;
+                        break;
+                case MotionEvent.ACTION_UP:
+                        int scrollx = getScrollX();//屏幕左边距离主界面左边的距离，屏幕左边在主界面左边的左边，为负值
+                        if(scrollx>-getChildAt(0).getWidth()/2){
+                                currentScreen = MAIN;//拖动屏幕不到侧边栏的一半时，放手，显示主界面
+                                switchScreen();
+                        }else if(scrollx<-getChildAt(0).getWidth()/2){
+                                currentScreen = MENU;//拖动屏幕超过了侧边栏的一般，放手，显示侧边栏
+                                switchScreen();
+                        }
+                        break;
 
-	public SlideMenu(Context context) {
-		this(context, null, 0);
-	}
+                default:
+                        break;
+                }
+                return true;
+        }
+        
+        //切换显示侧边栏和主界面
+        private void switchScreen() {
+                int dx = 0 ;
+                int startX = getScrollX();//获得屏幕左边距离主界面左边的距离
+                if(currentScreen == MAIN){//切换到主界面
+                        dx = 0 - getScrollX();//目标是将屏幕左边与主界面左边重合
+                }else if(currentScreen == MENU){
+                        dx = -getChildAt(0).getWidth()-getScrollX();//目标是将屏幕左边与侧边栏的左边重合
+                }
+                //模拟数据，该方法不会真正的去执行，只是模拟
+                scroller.startScroll(startX, 0, dx, 0, Math.abs(dx)*5);
+                invalidate();//调用computeScroll()
+        }
+        
+        //invalidate()的最终的调用方法就是computeScroll()   因此需要重写该方法
+        @Override
+        public void computeScroll() {
+                if(scroller.computeScrollOffset()){//如果还在进行数据模拟
+                        scrollTo(scroller.getCurrX(), 0);//getCurrX()方法作用是，获得模拟数据时的移动路径的点
+                        invalidate();//只要在进行数据模拟，那么就继续调用computeScroll()方法，类似于递归
+                }
+        }
+        //判断当前显示的是不是侧边栏
+        public boolean isMenuShow() {
+                // TODO Auto-generated method stub
+                return currentScreen == MENU;
+        }
 
-	public SlideMenu(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+        //隐藏侧边栏
+        public void hideMenu() {
+                // TODO Auto-generated method stub
+                currentScreen = MAIN;
+                switchScreen();
+        }
 
-	public SlideMenu(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+        //显示侧边栏
+        public void showMenu() {
+                // TODO Auto-generated method stub
+                currentScreen = MENU;
+                switchScreen();
+        }
 
-		mScroller = new Scroller(getContext());
-		mCurrentScreen = SCREEN_MAIN;
-		mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-	}
-
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		measureViews(widthMeasureSpec, heightMeasureSpec);
-	}
-
-	public void measureViews(int widthMeasureSpec, int heightMeasureSpec) {
-		View menuView = getChildAt(0);
-		menuView.measure(menuView.getLayoutParams().width + menuView.getLeft()
-				+ menuView.getRight(), heightMeasureSpec);
-
-		View contentView = getChildAt(1);
-		contentView.measure(widthMeasureSpec, heightMeasureSpec);
-	}
-
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		int childCount = getChildCount();
-		if (childCount != 2) {
-			throw new IllegalStateException(
-					"The childCount of SlidingMenu must be 2");
-		}
-
-		View menuView = getChildAt(0);
-		final int width = menuView.getMeasuredWidth();
-		menuView.layout(-width, 0, 0, menuView.getMeasuredHeight());
-
-		View contentView = getChildAt(1);
-		contentView.layout(0, 0, contentView.getMeasuredWidth(),
-				contentView.getMeasuredHeight());
-	}
-	
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-		View child;
-		for (int i = 0; i < getChildCount(); i++) {
-			child = getChildAt(i);
-			child.setFocusable(true);
-			child.setClickable(true);
-		}
-	}
-	
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		if (mLocked) {
-			return true;
-		}
-
-		final int action = ev.getAction();
-		if ((action == MotionEvent.ACTION_MOVE)
-				&& (mTouchState != TOUCH_STATE_REST)) {
-			return true;
-		}
-
-		final float x = ev.getX();
-		final float y = ev.getY();
-
-		switch (action) {
-		case MotionEvent.ACTION_MOVE:
-
-			final int xDiff = (int) Math.abs(x - mLastMotionX);
-			final int yDiff = (int) Math.abs(y - mLastMotionY);
-
-			final int touchSlop = mTouchSlop;
-			boolean xMoved = xDiff > touchSlop;
-			boolean yMoved = yDiff > touchSlop;
-
-			if (xMoved || yMoved) {
-
-				if (xMoved) {
-					// Scroll if the user moved far enough along the X axis
-					mTouchState = TOUCH_STATE_SCROLLING;
-					enableChildrenCache();
-				}
-				// Either way, cancel any pending longpress
-				if (mAllowLongPress) {
-					mAllowLongPress = false;
-					// Try canceling the long press. It could also have been
-					// scheduled
-					// by a distant descendant, so use the mAllowLongPress flag
-					// to block
-					// everything
-					final View currentScreen = getChildAt(mCurrentScreen);
-					currentScreen.cancelLongPress();
-				}
-			}
-			break;
-
-		case MotionEvent.ACTION_DOWN:
-			// Remember location of down touch
-			mLastMotionX = x;
-			mLastMotionY = y;
-			mAllowLongPress = true;
-
-			mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST
-					: TOUCH_STATE_SCROLLING;
-
-			break;
-
-		case MotionEvent.ACTION_CANCEL:
-		case MotionEvent.ACTION_UP:
-			// Release the drag
-			clearChildrenCache();
-			mTouchState = TOUCH_STATE_REST;
-			mAllowLongPress = false;
-			break;
-		}
-
-		/*
-		 * The only time we want to intercept motion events is if we are in the
-		 * drag mode.
-		 */
-		return mTouchState != TOUCH_STATE_REST;
-	}
-	
-	void enableChildrenCache() {
-		final int count = getChildCount();
-		for (int i = 0; i < count; i++) {
-			final View layout = (View) getChildAt(i);
-			layout.setDrawingCacheEnabled(true);
-		}
-	}
-
-	void clearChildrenCache() {
-		final int count = getChildCount();
-		for (int i = 0; i < count; i++) {
-			final View layout = (View) getChildAt(i);
-			layout.setDrawingCacheEnabled(false);
-		}
-	}
-	
-	@Override
-	public boolean onTouchEvent(MotionEvent ev) {
-		if (mLocked) {
-			return true;
-		}
-
-		if (mVelocityTracker == null) {
-			mVelocityTracker = VelocityTracker.obtain();
-		}
-		mVelocityTracker.addMovement(ev);
-
-		final int action = ev.getAction();
-		final float x = ev.getX();
-
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			/*
-			 * If being flinged and user touches, stop the fling. isFinished
-			 * will be false if being flinged.
-			 */
-			if (!mScroller.isFinished()) {
-				mScroller.abortAnimation();
-			}
-
-			// Remember where the motion event started
-			mLastMotionX = x;
-			break;
-		case MotionEvent.ACTION_MOVE:
-			if (mTouchState == TOUCH_STATE_SCROLLING) {
-				// Scroll to follow the motion event
-				final int deltaX = (int) (mLastMotionX - x);
-				mLastMotionX = x;
-
-				if (deltaX < 0) {
-					if (deltaX + getScrollX() >= -getChildAt(0).getWidth()) {
-						scrollBy(deltaX, 0);
-					}
-
-				} else if (deltaX > 0) {
-					final int availableToScroll = getChildAt(
-							getChildCount() - 1).getRight()
-							- getScrollX() - getWidth();
-
-					if (availableToScroll > 0) {
-						scrollBy(Math.min(availableToScroll, deltaX), 0);
-					}
-				}
-			}
-			break;
-		case MotionEvent.ACTION_UP:
-			if (mTouchState == TOUCH_STATE_SCROLLING) {
-				final VelocityTracker velocityTracker = mVelocityTracker;
-				velocityTracker.computeCurrentVelocity(1000);
-				int velocityX = (int) velocityTracker.getXVelocity();
-
-				if (velocityX > SNAP_VELOCITY && mCurrentScreen == SCREEN_MAIN) {
-					// Fling hard enough to move left
-					snapToScreen(SCREEN_MENU);
-				} else if (velocityX < -SNAP_VELOCITY
-						&& mCurrentScreen == SCREEN_MENU) {
-					// Fling hard enough to move right
-					snapToScreen(SCREEN_MAIN);
-				} else {
-					snapToDestination();
-				}
-
-				if (mVelocityTracker != null) {
-					mVelocityTracker.recycle();
-					mVelocityTracker = null;
-				}
-			}
-			mTouchState = TOUCH_STATE_REST;
-			break;
-		case MotionEvent.ACTION_CANCEL:
-			mTouchState = TOUCH_STATE_REST;
-		}
-
-		return true;
-	}
-	
-	@Override
-	public void computeScroll() {
-		if (mScroller.computeScrollOffset()) {
-			scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-		} else if (mNextScreen != SCREEN_INVALID) {
-			mCurrentScreen = Math.max(0,
-					Math.min(mNextScreen, getChildCount() - 1));
-			mNextScreen = SCREEN_INVALID;
-			clearChildrenCache();
-		}
-	}
-
-	@Override
-	public void scrollTo(int x, int y) {
-		super.scrollTo(x, y);
-		postInvalidate();
-	}
-
-	@Override
-	protected void dispatchDraw(Canvas canvas) {
-		final int scrollX = getScrollX();
-		super.dispatchDraw(canvas);
-		canvas.translate(scrollX, 0);
-	}
-
-	@Override
-	public boolean dispatchUnhandledMove(View focused, int direction) {
-		if (direction == View.FOCUS_LEFT) {
-			if (getCurrentScreen() > 0) {
-				snapToScreen(getCurrentScreen() - 1);
-				return true;
-			}
-		} else if (direction == View.FOCUS_RIGHT) {
-			if (getCurrentScreen() < getChildCount() - 1) {
-				snapToScreen(getCurrentScreen() + 1);
-				return true;
-			}
-		}
-		return super.dispatchUnhandledMove(focused, direction);
-	}
-	
-	protected void snapToScreen(int whichScreen) {
-
-		enableChildrenCache();
-
-		whichScreen = Math.max(0, Math.min(whichScreen, getChildCount() - 1));
-		boolean changingScreens = whichScreen != mCurrentScreen;
-
-		mNextScreen = whichScreen;
-
-		View focusedChild = getFocusedChild();
-		if (focusedChild != null && changingScreens
-				&& focusedChild == getChildAt(mCurrentScreen)) {
-			focusedChild.clearFocus();
-		}
-
-		final int newX = (whichScreen - 1) * getChildAt(0).getWidth();
-		final int delta = newX - getScrollX();
-		mScroller.startScroll(getScrollX(), 0, delta, 0, Math.abs(delta) * 2);
-		invalidate();
-	}
-
-	protected void snapToDestination() {
-		if (getScrollX() == 0) {
-			return;
-		}
-		final int screenWidth = getChildAt(0).getWidth();
-		final int whichScreen = (screenWidth + getScrollX() + (screenWidth / 2))
-				/ screenWidth;
-		snapToScreen(whichScreen);
-	}
-	
-	public int getCurrentScreen() {
-		return mCurrentScreen;
-	}
-	
-	public boolean isMainScreenShowing() {
-		return mCurrentScreen == SCREEN_MAIN;
-	}
-	
-	public void openMenu() {
-		mCurrentScreen = SCREEN_MENU;
-		snapToScreen(mCurrentScreen);
-	}
-	
-	public void closeMenu() {
-		mCurrentScreen = SCREEN_MAIN;
-		snapToScreen(mCurrentScreen);
-	}
-	
-	public void unlock() {
-		mLocked = false;
-	}
-
-	public void lock() {
-		mLocked = true;
-	}
-	
+        
 }
+

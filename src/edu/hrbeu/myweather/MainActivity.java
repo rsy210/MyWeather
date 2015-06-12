@@ -39,7 +39,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class MainActivity extends Activity implements OnGestureListener,
-		OnTouchListener {
+		OnTouchListener,OnClickListener {
 
 	// 定义一个GestureDetector(手势识别类)对象的引用
 	private GestureDetector myGestureDetector;
@@ -121,6 +121,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		/* pageControl = (PageControlView) findViewById(R.id.); */
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
+		ImageView menuImage = (ImageView) findViewById(R.id.title_bar_menu_btn);
+		menuImage.setOnClickListener(this);
 
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
@@ -457,5 +459,20 @@ public class MainActivity extends Activity implements OnGestureListener,
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		return myGestureDetector.onTouchEvent(event);
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.title_bar_menu_btn:
+			if (slideMenu.isMenuShow()) {
+				slideMenu.hideMenu();
+			} else {
+				slideMenu.showMenu();
+			}
+			break;
+		}
+		
 	}
 }
