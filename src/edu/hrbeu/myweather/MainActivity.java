@@ -39,7 +39,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class MainActivity extends Activity implements OnGestureListener,
-		OnTouchListener,OnClickListener {
+		OnTouchListener, OnClickListener {
 
 	// 定义一个GestureDetector(手势识别类)对象的引用
 	private GestureDetector myGestureDetector;
@@ -56,6 +56,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 	TextView windD;
 	TextView windP;
 	ImageView phenomena;
+
+	TextView sundown;
+	TextView sunrise;
+
 	String url;
 
 	Button citybutton;
@@ -138,19 +142,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 		myViewFlipper.setDisplayedChild(0);
 		// ///////////////////////////////////////////////////////////////////
 
-		// 获取URL
+		/**
+		 * 获取URL
+		 */
 		SharedPreferences sp;
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		String areaid = sp.getString("citycode", "101010100");
 		url = EncodeUtil.getUrl(areaid);
 		// ////////////////////////////////////////////////////////////////
 
-		city = (TextView) findViewById(R.id.city);
-
-		date = (TextView) findViewById(R.id.date);
-
 		citybutton = (Button) findViewById(R.id.citybutton);
-
 		citybutton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -206,6 +207,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 	}
 
 	public void changeview(View view) {
+		sunrise = (TextView) view.findViewById(R.id.sunrise);
+		sundown = (TextView) view.findViewById(R.id.sundown);
+		city = (TextView) view.findViewById(R.id.city);
+		date = (TextView) view.findViewById(R.id.date);
 		viewday = (TextView) view.findViewById(R.id.viewday);
 		temperature = (TextView) view.findViewById(R.id.temperature);
 		windD = (TextView) view.findViewById(R.id.windD);
@@ -248,34 +253,20 @@ public class MainActivity extends Activity implements OnGestureListener,
 		String sunrises, sundowns;
 		sunrises = suntimes[0];
 		sundowns = suntimes[1];
-		// 转换为时间格式
-		DateFormat sundf = new SimpleDateFormat("HH:mm");
-		Date sunrise = null;
-		Date sundown = null;
-		try {
-			sunrise = sundf.parse(sunrises);
-			sundown = sundf.parse(sundowns);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		sunrise.setText("日出时间:" + sunrises);
+		sundown.setText("日落时间:" + sundowns);
 
 		// ////////////////////////////////////////////
 		Date dt = new Date();// 如果不需要格式,可直接用dt,dt就是当前系统时间
-		DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");// 设置显示格式
-		String nowTime = df.format(dt);// 用DateFormat的format()方法在dt中获取并以yyyy/MM/dd
-										// HH:mm:ss格式显示201506051830
-
+								// HH:mm:ss格式显示201506051830
 		int hh = dt.getHours();
 		Boolean dayflag = true;
+
+		// 白天晚上的参数不同，通过日出日落时间进行判读输出
 		if (hh >= 18 || hh < 8)
 			dayflag = false;
 
-		// //////////////////////////////////////////////
-
-		// // 白天晚上的参数不同，通过日出日落时间进行判读输出
-		// boolean flag1 = now.after(sunrise);
-		// boolean flag2 = now.before(sundown);
 		if (dayflag) {
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPD[i])]);
@@ -287,6 +278,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 					.parseInt(myWeather.weatherD[i])]);
 			temperature.setText(myWeather.temperatureD[i]);
 		} else {
+			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPN[i])]);
 
@@ -309,7 +301,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 			jsonObject = new JSONObject(strResult);
 
 			JSONObject c = jsonObject.getJSONObject("c");
-
 			JSONObject f = jsonObject.getJSONObject("f");
 
 			Weather weather = new Weather();
@@ -319,7 +310,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 			String s1 = new String(converttoBytes);
 			System.out.println(s1);
 			weather.city = s1;
-
 			weather.province = c.getString("c7");
 			weather.date = f.getString("f0");
 
@@ -331,18 +321,15 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 				weather.weatherD[i] = jsob.getString("fa");
 				weather.weatherN[i] = jsob.getString("fb");
-
 				weather.temperatureD[i] = jsob.getString("fc");
 				weather.temperatureN[i] = jsob.getString("fd");
 				weather.windDD[i] = jsob.getString("fe");
 				weather.windDN[i] = jsob.getString("ff");
 				weather.windPD[i] = jsob.getString("fg");
 				weather.windPN[i] = jsob.getString("fh");
-
 				weather.suntime[i] = jsob.getString("fi");// 日出日落时间，一会用字符串处理函数分割
 
 			}
-
 			return weather;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -358,7 +345,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	}
 
 	/*
-	 *  * 获取指定日后 后 dayAddNum 天的 日期
+	 * * 获取指定日后 后 dayAddNum 天的 日期
 	 * 
 	 * @param day 日期，格式为String："2013-9-3";
 	 * 
@@ -426,27 +413,28 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	}
 
-	// @Override
-	// public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-	// float velocityY) {
-	// // TODO Auto-generated method stub
-	// return false;
-	// }
-
 	// 实现OnFling方法，就可以利用滑动的起始坐标识别出左右滑动的手势，并处理
+	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-
+		// TODO Auto-generated method stub
 		// 参数e1是按下事件，e2是放开事件，剩下两个是滑动的速度分量，这里用不到
 		// 按下时的横坐标大于放开时的横坐标，从右向左滑动
-		if ((e1.getX() > e2.getX()) && (page < 2)) {
-			myViewFlipper.showNext();
-			page += 1;
-		}
-		// 按下时的横坐标小于放开时的横坐标，从左向右滑动
-		else if ((e1.getX() < e2.getX()) && (page > 0)) {
-			myViewFlipper.showPrevious();
-			page -= 1;
+		if (slideMenu.isMenuShow()) {
+			slideMenu.hideMenu();
+		} else {
+			if ((e1.getX() > e2.getX()) && (page < 2)) {
+				myViewFlipper.showNext();
+				page += 1;
+			}
+			// 按下时的横坐标小于放开时的横坐标，从左向右滑动
+			else if ((e1.getX() < e2.getX()) && (page > 0)) {
+				myViewFlipper.showPrevious();
+				page -= 1;
+			} else if ((e1.getX() < e2.getX()) && (page == 0)) {
+				slideMenu.showMenu();
+			}
+
 		}
 
 		return false;
@@ -473,6 +461,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 			}
 			break;
 		}
-		
+
 	}
 }

@@ -33,10 +33,9 @@ public class CityActivity extends Activity {
 
 		searchcity = (EditText) findViewById(R.id.searchcity);
 		searchbutton = (Button) findViewById(R.id.searchbutton);
-		
 
 		// DBUtil myDbHelper = new DBUtil(null);
-	myDbHelper = new DBUtil(this);
+		myDbHelper = new DBUtil(this);
 
 		try {
 			myDbHelper.createDataBase();
@@ -50,7 +49,7 @@ public class CityActivity extends Activity {
 		}
 
 		searchbutton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -62,12 +61,12 @@ public class CityActivity extends Activity {
 				ed.putString("citycode", citycode);
 				ed.commit();
 
-				Intent intent = new Intent(CityActivity.this,MainActivity.class);
+				Intent intent = new Intent(CityActivity.this,
+						MainActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
 			}
 		});
-
 
 	}
 

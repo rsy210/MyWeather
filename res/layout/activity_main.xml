@@ -1,92 +1,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-        android:layout_height="45.0dip"
-    android:background="@drawable/bg_title_bar"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.hrbeu.myweather.MainActivity" >
 
-   <edu.hrbeu.myweather.SlideMenu
+    <edu.hrbeu.myweather.SlideMenu
         android:id="@+id/slide_menu"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
         <include layout="@layout/layout_menu" />
-        
-        <RelativeLayout
+
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical" >
 
-           <ImageView
-        android:id="@+id/title_bar_menu_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="3.0dip"
-        android:layout_marginRight="3.0dip"
-        android:layout_marginTop="3.0dip"
-        android:gravity="center"
-        android:src="@drawable/ic_top_bar_category" />
+            <include layout="@layout/layout_title_bar" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_toRightOf="@id/title_bar_menu_btn"
-        android:background="@drawable/ic_top_divider" />
+            <ViewFlipper
+                android:id="@+id/myViewFlipper"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <TextView
-        android:id="@+id/title_bar_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:paddingLeft="75.0dip"
-        android:paddingRight="75.0dip"
-        android:singleLine="true"
-        android:text="Title"
-        android:textColor="#ffffff"
-        android:textSize="22sp" />
 
-     <TextView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_centerHorizontal="true"
-         android:text="Hello World"
-         android:textSize="22sp" />
-
-       </RelativeLayout>
-    
-    <ViewFlipper
-        android:id="@+id/myViewFlipper"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-    
-    <include layout="@layout/view_today" />  
-  
-        <include layout="@layout/view_tomorrow" />  
-  
-        <include layout="@layout/view_afterday" />  
-  
-    </ViewFlipper>  
-    <!-- 
-    <edu.hrbeu.myweather.PageControlView  
-        android:id="@+id/page_indicator"  
-        android:layout_width="fill_parent"  
-        android:layout_height="wrap_content"  
-        android:layout_marginBottom="25dip"  
-        android:gravity="center_horizontal"  
-        android:layout_alignParentBottom="true"  
-        xyz:cell_width="@dimen/indicator_width"  
-        xyz:cell_height="@dimen/indicator_height" />   -->
-        
-        
-        
-    </edu.hrbeu.myweather.SlideMenu> 
+            </ViewFlipper>
+            
+            
+        </LinearLayout>
+    </edu.hrbeu.myweather.SlideMenu>
 
 </LinearLayout>
