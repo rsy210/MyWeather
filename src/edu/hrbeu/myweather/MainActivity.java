@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import edu.hrbeu.myweather.SlideMenu;
 import edu.hrbeu.myweather.R;
@@ -116,6 +118,18 @@ public class MainActivity extends Activity implements OnGestureListener,
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
+		
+		
+		// ////////////////////////////////////////////////////////////////
+		/**
+		 * 获取URL
+		 */
+		SharedPreferences sp;
+		sp = getSharedPreferences("mycity", MODE_PRIVATE);
+		String areaid = sp.getString("citycode", "101010100");
+		String addsearchcity = sp.getString("searchcity", "");
+		url = EncodeUtil.getUrl(areaid);
+		
 		// //////////////////////////////////////////////////////////////
 		// 重点，将Context对象传入LayoutInflater.from()里，得到LayoutInflater对象
 		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
@@ -136,7 +150,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 		
 		citylist = (ListView)findViewById(R.id.citylist);
 		
-		String[] cityArray ={"南京","哈尔滨","沈阳"};
+		
+		List<String> cityArray = new ArrayList<String>();
+		cityArray.add(addsearchcity);
+	
 		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,cityArray);
 
 		citylist.setAdapter(cityAdapter);
@@ -164,15 +181,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 		myViewFlipper.setOnTouchListener(this);
 		myViewFlipper.setDisplayedChild(0);
 		// ///////////////////////////////////////////////////////////////////
-
-		/**
-		 * 获取URL
-		 */
-		SharedPreferences sp;
-		sp = getSharedPreferences("mycity", MODE_PRIVATE);
-		String areaid = sp.getString("citycode", "101010100");
-		url = EncodeUtil.getUrl(areaid);
-		// ////////////////////////////////////////////////////////////////
 
 		citybutton = (Button) findViewById(R.id.citybutton);
 		citybutton.setOnClickListener(new OnClickListener() {
@@ -360,12 +368,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 		return null;
 	}
 
-	public void viewday() {
-		String[] viewdays = null;
-		for (int i = 0; i < 3; i++) {
-			viewdays[i] = getDateStr(i);
-		}
-	}
 
 	/*
 	 * * 获取指定日后 后 dayAddNum 天的 日期
@@ -386,6 +388,9 @@ public class MainActivity extends Activity implements OnGestureListener,
 		return dateOk;
 	}
 
+	
+
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

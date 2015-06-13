@@ -59,6 +59,8 @@ public class CityActivity extends Activity {
 
 				Editor ed = sp.edit();
 				ed.putString("citycode", citycode);
+				ed.putString("searchcity", searchcity.getText()
+						.toString());
 				ed.commit();
 
 				Intent intent = new Intent(CityActivity.this,
