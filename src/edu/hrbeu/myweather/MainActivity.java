@@ -33,8 +33,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -105,6 +109,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	private View view_tomorrow;
 
 	private View view_afterday;
+	private ListView citylist;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +132,25 @@ public class MainActivity extends Activity implements OnGestureListener,
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
 		ImageView menuImage = (ImageView) findViewById(R.id.title_bar_menu_btn);
 		menuImage.setOnClickListener(this);
+		
+		
+		citylist = (ListView)findViewById(R.id.citylist);
+		
+		String[] cityArray ={"南京","哈尔滨","沈阳"};
+		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,cityArray);
 
+		citylist.setAdapter(cityAdapter);
+		
+		citylist.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
 		myViewFlipper.addView(view_tomorrow);
