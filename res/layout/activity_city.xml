@@ -11,18 +11,15 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical" >
+         >
 
         <EditText
             android:id="@+id/searchcity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:ems="10"
             android:hint="搜索城市"
+            android:layout_weight="1"
             android:imeOptions="actionSearch"
             android:singleLine="true" >
 
@@ -34,12 +31,6 @@
             android:layout_height="wrap_content"
             android:text="选择城市" />
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/searchcity" >
-        </ListView>
     </LinearLayout>
 
 </RelativeLayout>

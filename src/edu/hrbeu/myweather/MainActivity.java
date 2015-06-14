@@ -1,12 +1,14 @@
 package edu.hrbeu.myweather;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import edu.hrbeu.myweather.SlideMenu;
 import edu.hrbeu.myweather.R;
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -54,7 +57,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
-
+	Index myIndex = new Index();
 	TextView city;
 	TextView date;
 	TextView viewday;
@@ -66,7 +69,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	TextView sundown;
 	TextView sunrise;
 
-	String url;
+	String url_f;
+	String url_i;
 
 	Button citybutton;
 
@@ -111,25 +115,39 @@ public class MainActivity extends Activity implements OnGestureListener,
 	private View view_tomorrow;
 
 	private View view_afterday;
-	private ListView citylist;
+	private ListView cityLV;
+	private SharedPreferences sp2;
+	private ArrayList<String> cityList;
+	private ArrayList<String> codeList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		
-		
+
 		// ////////////////////////////////////////////////////////////////
-		/**
-		 * 获取URL
-		 */
-		SharedPreferences sp;
-		sp = getSharedPreferences("mycity", MODE_PRIVATE);
-		String areaid = sp.getString("citycode", "101010100");
-		String addsearchcity = sp.getString("searchcity", "");
-		url = EncodeUtil.getUrl(areaid);
+		// 获取URL
+		SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE);
+		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);//当前显示的城市代码放在这了
 		
+		// String areaid = sp.getString("citycode", "101010100");
+
+		Map<String, ?> cityMap = sp.getAll();// 获取sp中所有键值对
+		cityList = new ArrayList<String>();
+		codeList = new ArrayList<String>();
+
+		for (Map.Entry<String, ?> entry : cityMap.entrySet()) {
+			System.out.println("key= " + entry.getKey() + " and value= "
+					+ entry.getValue());
+			cityList.add(entry.getKey());
+			codeList.add(entry.getValue().toString());
+		}
+
+		String areaid = sp2.getString("citycode", "101010100");
+
+		url_f = EncodeUtil.getUrl(areaid, "forecast_v");// 天气
+		url_i = EncodeUtil.getUrl(areaid, "index_v");// 指数
 		// //////////////////////////////////////////////////////////////
 		// 重点，将Context对象传入LayoutInflater.from()里，得到LayoutInflater对象
 		LayoutInflater factory = LayoutInflater.from(MainActivity.this);
@@ -146,28 +164,41 @@ public class MainActivity extends Activity implements OnGestureListener,
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
 		ImageView menuImage = (ImageView) findViewById(R.id.title_bar_menu_btn);
 		menuImage.setOnClickListener(this);
-		
-		
-		citylist = (ListView)findViewById(R.id.citylist);
-		
-		
-		List<String> cityArray = new ArrayList<String>();
-		cityArray.add(addsearchcity);
-	
-		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,cityArray);
 
-		citylist.setAdapter(cityAdapter);
-		
-		citylist.setOnItemClickListener(new OnItemClickListener() {
+		// //////////////////////////////////////////////////////////////
+		// 城市列表
+		cityLV = (ListView) findViewById(R.id.citylist);
+
+		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this,
+				R.layout.list_style, cityList);
+
+		cityLV.setAdapter(cityAdapter);
+		cityLV.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
 				
+				
+				Editor ed2 = sp2.edit();
+				ed2.putString("citycode", codeList.get(position));
+				ed2.putString("searchcity", cityList.get(position));
+				ed2.commit();
+				
+				//生成新的获取城市天气地址
+				url_f = EncodeUtil.getUrl(codeList.get(position), "forecast_v");// 天气
+				url_i = EncodeUtil.getUrl(codeList.get(position), "index_v");// 指数
+				//获取新的城市天气数据
+				getWeatherDate(url_f, 1);
+				getWeatherDate(url_i, 2);
+				
+				if (slideMenu.isMenuShow()) 
+					slideMenu.hideMenu();
+				
 			}
 		});
-		
+
 		// 用addView方法将生成的View对象加入到ViewFlipper对象中
 		myViewFlipper.addView(view_today);
 		myViewFlipper.addView(view_tomorrow);
@@ -181,7 +212,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 		myViewFlipper.setOnTouchListener(this);
 		myViewFlipper.setDisplayedChild(0);
 		// ///////////////////////////////////////////////////////////////////
-
 		citybutton = (Button) findViewById(R.id.citybutton);
 		citybutton.setOnClickListener(new OnClickListener() {
 
@@ -200,11 +230,12 @@ public class MainActivity extends Activity implements OnGestureListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		getWeatherDate();
+		getWeatherDate(url_f, 1);
+		getWeatherDate(url_i, 2);
 		System.out.println("onResume");
 	}
 
-	public void getWeatherDate() {
+	public void getWeatherDate(final String url, final int num) {
 		Thread newThread; // 声明一个子线程
 
 		newThread = new Thread(new Runnable() {
@@ -222,9 +253,13 @@ public class MainActivity extends Activity implements OnGestureListener,
 							new BasicResponseHandler());
 					Log.v("response text", response);
 
-					myWeather = getWeather(response);
+					if (num == 1)
+						myWeather = getWeather(response);
+					else
+						myIndex = getIndex(response);
 
 					Message m = new Message();
+					m.what = num;
 					myHandler.sendMessage(m);// 发送消息:系统会自动调用handleMessage方法来处理消息
 
 				} catch (ClientProtocolException e) {
@@ -257,15 +292,18 @@ public class MainActivity extends Activity implements OnGestureListener,
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
-			// if (msg.what == UpdateTextView) {
-			// showText.setText("sub thread update UI");// 更新界面显示
-			// }
-			changeview(view_today);
-			RefreshWeather(0);
-			changeview(view_tomorrow);
-			RefreshWeather(1);
-			changeview(view_afterday);
-			RefreshWeather(2);
+			if (msg.what == 1) {
+				changeview(view_today);
+				RefreshWeather(0);
+				changeview(view_tomorrow);
+				RefreshWeather(1);
+				changeview(view_afterday);
+				RefreshWeather(2);// 更新界面显示
+			}
+			if (msg.what == 2) {
+				RefreshIndex();
+			}
+
 			super.handleMessage(msg);
 
 		}
@@ -322,6 +360,12 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 	}
 
+	/**
+	 * 获取天气预报
+	 * 
+	 * @param strResult
+	 * @return
+	 */
 	public Weather getWeather(String strResult) {
 
 		try {
@@ -335,12 +379,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 			JSONObject f = jsonObject.getJSONObject("f");
 
 			Weather weather = new Weather();
-			weather.city = c.getString("c3");
-
-			byte[] converttoBytes = weather.city.getBytes("ISO-8859-1");
-			String s1 = new String(converttoBytes);
-			System.out.println(s1);
-			weather.city = s1;
+			weather.city = convertWord(c.getString("c3"));
 			weather.province = c.getString("c7");
 			weather.date = f.getString("f0");
 
@@ -368,6 +407,80 @@ public class MainActivity extends Activity implements OnGestureListener,
 		return null;
 	}
 
+	/**
+	 * 获取天气指数信息
+	 * 
+	 * @param strResult
+	 * @return
+	 */
+	public Index getIndex(String strResult) {
+
+		try {
+			// /解析
+			JSONObject jsonObject;
+			// String a = new String(strResult, "UTF-8");
+			jsonObject = new JSONObject(strResult);
+			Index index = new Index();
+			JSONArray i = jsonObject.getJSONArray("i");
+			for (int j = 0; j < i.length(); j++) {
+
+				JSONObject jsob = (JSONObject) i.get(j);
+
+				index.i_s[j] = convertWord(jsob.getString("i1"));
+				index.i_c[j] = convertWord(jsob.getString("i2"));
+				index.i_c2[j] = convertWord(jsob.getString("i3"));
+				index.i_l[j] = convertWord(jsob.getString("i4"));
+				index.i_5[j] = convertWord(jsob.getString("i5"));
+			}
+			return index;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 刷新天气指数
+	 */
+	public void RefreshIndex() {
+
+		TextView i1 = (TextView) view_today.findViewById(R.id.i1);
+		TextView i2 = (TextView) view_today.findViewById(R.id.i2);
+		TextView i3 = (TextView) view_today.findViewById(R.id.i3);
+
+		// i1.setText(myIndex.i_s[0] + "," + myIndex.i_c[0] + ","
+		// + myIndex.i_c2[0] + "," + myIndex.i_l[0] + "," + myIndex.i_5[0]);
+		// i2.setText(myIndex.i_s[1] + "," + myIndex.i_c[1] + ","
+		// + myIndex.i_c2[1] + "," + myIndex.i_l[1] + "," + myIndex.i_5[1]);
+		// i3.setText(myIndex.i_s[2] + "," + myIndex.i_c[2] + ","
+		// + myIndex.i_c2[2] + "," + myIndex.i_l[2] + "," + myIndex.i_5[2]);
+		i1.setText(myIndex.i_c[0] + ":" + myIndex.i_l[0] + "\n"
+				+ myIndex.i_5[0]);
+		i2.setText(myIndex.i_c[1] + ":" + myIndex.i_l[1] + "\n"
+				+ myIndex.i_5[1]);
+		i3.setText(myIndex.i_c[2] + ":" + myIndex.i_l[2] + "\n"
+				+ myIndex.i_5[2]);
+	}
+
+	/**
+	 * 将中文乱码转换为正常编码
+	 * 
+	 * @param before
+	 * @return
+	 */
+	public String convertWord(String before) {
+		byte[] converttoBytes = null;
+		try {
+			converttoBytes = before.getBytes("ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String after = new String(converttoBytes);
+		System.out.println(after);
+
+		return after;
+	}
 
 	/*
 	 * * 获取指定日后 后 dayAddNum 天的 日期
@@ -388,9 +501,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 		return dateOk;
 	}
 
-	
-
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

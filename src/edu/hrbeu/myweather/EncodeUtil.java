@@ -95,11 +95,12 @@ public class EncodeUtil {
 		return to.toString();
 	}
 	
-	public static String getUrl(String areaid)
+	public static String getUrl(String areaid,String type)
 	{
 		String url = "";
 
-		String type = "forecast_v";
+//		String type = "forecast_v";
+//		String type2 = "index_v";
 		String appid = "c2ffc8e63c5b40ca";
 		String appid_six = "c2ffc8";
 		String private_key = "0244f8_SmartWeatherAPI_5e9551e";
@@ -126,5 +127,6 @@ public class EncodeUtil {
 		
 		return url;
 	}
+	
 
 }

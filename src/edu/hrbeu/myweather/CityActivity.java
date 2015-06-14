@@ -15,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class CityActivity extends Activity {
 
@@ -22,6 +23,7 @@ public class CityActivity extends Activity {
 	Button searchbutton;
 	ListView listview;
 	SharedPreferences sp;
+	SharedPreferences sp2;
 	DBUtil myDbHelper;
 
 	@Override
@@ -30,6 +32,7 @@ public class CityActivity extends Activity {
 		setContentView(R.layout.activity_city);
 
 		sp = getSharedPreferences("mycity", MODE_PRIVATE);
+		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);
 
 		searchcity = (EditText) findViewById(R.id.searchcity);
 		searchbutton = (Button) findViewById(R.id.searchbutton);
@@ -57,16 +60,27 @@ public class CityActivity extends Activity {
 				String citycode = myDbHelper.queryOneData(searchcity.getText()
 						.toString());
 
-				Editor ed = sp.edit();
-				ed.putString("citycode", citycode);
-				ed.putString("searchcity", searchcity.getText()
-						.toString());
-				ed.commit();
+				if (citycode != null) {
+					Editor ed = sp.edit();
+					ed.putString(searchcity.getText().toString(), citycode);
+					// ed.putString("searchcity", searchcity.getText()
+					// .toString());
+					ed.commit();
 
-				Intent intent = new Intent(CityActivity.this,
-						MainActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+					Editor ed2 = sp2.edit();
+					ed2.putString("citycode", citycode);
+					ed2.putString("searchcity", searchcity.getText().toString());
+					ed2.commit();
+
+					Intent intent = new Intent(CityActivity.this,
+							MainActivity.class);
+					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(intent);
+				} else {
+					Toast.makeText(CityActivity.this, "没有找到对应城市",
+							Toast.LENGTH_SHORT).show();
+					searchcity.setText("");
+				}
 			}
 		});
 

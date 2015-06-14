@@ -119,4 +119,28 @@
         android:layout_height="wrap_content"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/i1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="指数"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/i2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="指数"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/i3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="指数"
+        android:textSize="14sp" />
+
 </LinearLayout>
