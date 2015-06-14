@@ -22,18 +22,6 @@
         android:layout_toRightOf="@id/title_bar_menu_btn"
         android:background="@drawable/ic_top_divider" />
 
-    <TextView
-        android:id="@+id/title_bar_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:paddingLeft="75.0dip"
-        android:paddingRight="75.0dip"
-        android:singleLine="true"
-        android:text="Title"
-        android:textColor="#ffffff"
-        android:textSize="22sp" />
+
 
 </RelativeLayout>
