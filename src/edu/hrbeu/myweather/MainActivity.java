@@ -119,6 +119,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	private SharedPreferences sp2;
 	private ArrayList<String> cityList;
 	private ArrayList<String> codeList;
+	private TextView citytitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +166,9 @@ public class MainActivity extends Activity implements OnGestureListener,
 		ImageView menuImage = (ImageView) findViewById(R.id.title_bar_menu_btn);
 		menuImage.setOnClickListener(this);
 
+		
+		citytitle=(TextView) findViewById(R.id.citytitle);
+		
 		// //////////////////////////////////////////////////////////////
 		// 城市列表
 		cityLV = (ListView) findViewById(R.id.citylist);
@@ -293,6 +297,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
 			if (msg.what == 1) {
+				citytitle.setText(myWeather.city);
 				changeview(view_today);
 				RefreshWeather(0);
 				changeview(view_tomorrow);
