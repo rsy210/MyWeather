@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="后天"
-        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/viewday"
@@ -17,20 +11,10 @@
         android:layout_height="wrap_content"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="北京"
-        android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/citybutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
 
-    <TextView
+
+    <!-- <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="预报日期"
@@ -41,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp" />
-
+ -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -56,8 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="气温"
-            android:textSize="50sp" />
+            android:text="气温°"
+            android:textSize="75dp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

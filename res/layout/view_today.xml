@@ -5,33 +5,12 @@
     android:orientation="vertical" >
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:text="今天"
-        android:textSize="25sp" />
-
-    <TextView
         android:id="@+id/viewday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="北京"
-        android:textSize="16sp" />
-
-    <Button
-        android:id="@+id/citybutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
-    <TextView
+<!--     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="预报日期"
@@ -41,7 +20,7 @@
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:textSize="16sp" /> -->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,20 +36,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="气温"
-            android:textSize="50sp" />
+            android:text="00°"
+            android:textSize="75dp" />
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/temperature"
-            android:layout_alignTop="@+id/temperature"
-            android:layout_toRightOf="@id/temperature" >
+            android:layout_below="@id/temperature" >
 
             <LinearLayout
+                android:id="@+id/wind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal" 
+                android:weightSum="1">
 
                 <TextView
                     android:id="@+id/windD"
@@ -90,7 +69,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" >
+                android:layout_toRightOf="@id/wind" >
 
                 <TextView
                     android:id="@+id/textView1"

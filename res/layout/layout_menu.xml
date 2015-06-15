@@ -14,60 +14,30 @@
         android:text="分类"
         android:textColor="#ff959595"
         android:textSize="14.0sp" />
+        <Button
+        android:id="@+id/citybutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="添加城市" />
 
-    <TextView
+    <ListView
+        android:id="@+id/citylist"
         android:layout_width="240dip"
-        android:layout_height="50.0dip"
+        android:layout_height="fill_parent"
         android:background="@drawable/selector_category_item"
-        android:clickable="true"
         android:drawableLeft="@drawable/ic_category_mark"
+        android:clickable="true"
         android:drawablePadding="1.0dip"
         android:gravity="center_vertical"
         android:paddingLeft="15.0dip"
         android:paddingRight="10.0dip"
-        android:text="侧边栏选项－1"
         android:textColor="#ff959595"
-        android:textSize="16.0sp" />
+        android:textSize="16.0sp" >
 
-    <View
-        android:layout_width="240dip"
-        android:layout_height="2.0dip"
-        android:background="@drawable/ic_shelf_category_divider" />
+    </ListView>
 
-    <TextView
-        android:layout_width="240dip"
-        android:layout_height="50.0dip"
-        android:background="@drawable/selector_category_item"
-        android:clickable="true"
-        android:drawableLeft="@drawable/ic_category_mark"
-        android:drawablePadding="1.0dip"
-        android:gravity="center_vertical"
-        android:paddingLeft="15.0dip"
-        android:paddingRight="10.0dip"
-        android:text="侧边栏选项－2"
-        android:textColor="#ff959595"
-        android:textSize="16.0sp" />
 
-    <View
-        android:layout_width="240dip"
-        android:layout_height="2.0dip"
-        android:background="@drawable/ic_shelf_category_divider" />
-
-    <TextView
-        android:layout_width="240dip"
-        android:layout_height="50.0dip"
-        android:background="@drawable/selector_category_item"
-        android:clickable="true"
-        android:drawableLeft="@drawable/ic_category_mark"
-        android:drawablePadding="1.0dip"
-        android:gravity="center_vertical"
-        android:paddingLeft="15.0dip"
-        android:paddingRight="10.0dip"
-        android:text="侧边栏选项－3"
-        android:textColor="#ff959595"
-        android:textSize="16.0sp" />
-
-    <View
+            <View
         android:layout_width="240dip"
         android:layout_height="2.0dip"
         android:background="@drawable/ic_shelf_category_divider" />

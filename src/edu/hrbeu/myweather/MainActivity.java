@@ -58,7 +58,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
 	Index myIndex = new Index();
-	TextView city;
 	TextView date;
 	TextView viewday;
 	TextView temperature;
@@ -120,6 +119,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	private ArrayList<String> cityList;
 	private ArrayList<String> codeList;
 	private TextView citytitle;
+	private TextView daytitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +168,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		
 		citytitle=(TextView) findViewById(R.id.citytitle);
+		daytitle=(TextView) findViewById(R.id.daytitle);
+		viewday = (TextView) findViewById(R.id.viewday);
 		
 		// //////////////////////////////////////////////////////////////
 		// 城市列表
@@ -279,9 +281,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	public void changeview(View view) {
 		sunrise = (TextView) view.findViewById(R.id.sunrise);
 		sundown = (TextView) view.findViewById(R.id.sundown);
-		city = (TextView) view.findViewById(R.id.city);
 		date = (TextView) view.findViewById(R.id.date);
-		viewday = (TextView) view.findViewById(R.id.viewday);
+		
 		temperature = (TextView) view.findViewById(R.id.temperature);
 		windD = (TextView) view.findViewById(R.id.windD);
 		windP = (TextView) view.findViewById(R.id.windP);
@@ -316,12 +317,13 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	public void RefreshWeather(int i) {
 		// TODO Auto-generated method stub
-		city.setText(myWeather.city);
 		date.setText(myWeather.date);
-
+        
 		String viewdays = getDateStr(i);
 		viewday.setText(viewdays);
 
+		String[] daytitles = {"今天","明天","后天"};
+		daytitle.setText(daytitles[i]);
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
 		String sunrises, sundowns;
@@ -350,7 +352,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherD[i])]);
-			temperature.setText(myWeather.temperatureD[i]);
+			temperature.setText(myWeather.temperatureD[i]+"°");
 		} else {
 			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
@@ -361,7 +363,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherN[i])]);
-			temperature.setText(myWeather.temperatureN[i]);
+			temperature.setText(myWeather.temperatureN[i]+"°");
 		}
 	}
 
@@ -497,11 +499,11 @@ public class MainActivity extends Activity implements OnGestureListener,
 	 * @return
 	 */
 	public String getDateStr(int dayAddNum) {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat df = new SimpleDateFormat("MM-dd");
 		Date nowDate = new Date();
 		Date newDate2 = new Date(nowDate.getTime() + dayAddNum * 24 * 60 * 60
 				* 1000);
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
 		String dateOk = simpleDateFormat.format(newDate2);
 		return dateOk;
 	}

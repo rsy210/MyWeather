@@ -10,12 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <ListView
-            android:id="@+id/citylist"
-            android:layout_width="240dip"
-            android:layout_height="fill_parent"
-            android:background="@drawable/bitmap_book_read_chapterlist_repeat" >
-        </ListView>
+        <include layout="@layout/layout_menu" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -24,7 +19,7 @@
 
             <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="45.0dip"
+                android:layout_height="50.0dip"
                 android:background="@drawable/bg_title_bar"
                 android:gravity="center_vertical" >
 
@@ -46,13 +41,40 @@
                     android:background="@drawable/ic_top_divider" />
 
                 <TextView
+                    android:id="@+id/daytitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="今天"
+                    android:textColor="#ffffff"
+                    android:textSize="22sp" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:layout_below="@id/daytitle"
+                 android:layout_centerHorizontal="true">
+
+                <TextView
                     android:id="@+id/citytitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" 
+                   
                     android:text="哈尔滨"
                     android:textColor="#ffffff"
-                    android:textSize="18sp" />
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/viewday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/citytitle"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp" />
+                </RelativeLayout>
             </RelativeLayout>
 
             <ViewFlipper
