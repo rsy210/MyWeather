@@ -4,91 +4,60 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-
-    <TextView
-        android:id="@+id/viewday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp" />
-
-
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="预报日期"
-        android:textSize="16sp" />
-
-    <TextView
+<!--     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:textSize="16sp" /> -->
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp" >
 
         <ImageView
             android:id="@+id/phenomena"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <TextView
+        android:id="@+id/weather_condition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/phenomena"
+        android:textSize="16sp" />
 
         <TextView
             android:id="@+id/temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="气温°"
+            android:text="00°"
             android:textSize="75dp" />
-
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/wind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/temperature"
-            android:layout_alignTop="@+id/temperature"
-            android:layout_toRightOf="@id/temperature" >
+            android:layout_alignBottom="@id/temperature"
+            android:layout_toRightOf="@id/temperature"
+            android:orientation="horizontal" >
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/windD"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:text="风向"
+                android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/windD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="风向"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/windP"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="风强"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <RelativeLayout
+            <TextView
+                android:id="@+id/windP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" >
-
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="空气质量" />
-            </RelativeLayout>
-        </RelativeLayout>
+                android:text="风强"
+                android:textSize="16sp" />
+        </LinearLayout>
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/weather_condition"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp" />
+
 
     <TextView
         android:id="@+id/sunrise"

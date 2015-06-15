@@ -281,7 +281,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	public void changeview(View view) {
 		sunrise = (TextView) view.findViewById(R.id.sunrise);
 		sundown = (TextView) view.findViewById(R.id.sundown);
-		date = (TextView) view.findViewById(R.id.date);
+		/*date = (TextView) view.findViewById(R.id.date);*/
 		
 		temperature = (TextView) view.findViewById(R.id.temperature);
 		windD = (TextView) view.findViewById(R.id.windD);
@@ -317,14 +317,15 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	public void RefreshWeather(int i) {
 		// TODO Auto-generated method stub
-		date.setText(myWeather.date);
+		/*date.setText(myWeather.date);*/
         
-		String viewdays = getDateStr(i);
+		/*String viewdays = getDateStr(i);
 		viewday.setText(viewdays);
 
 		String[] daytitles = {"今天","明天","后天"};
-		daytitle.setText(daytitles[i]);
+		daytitle.setText(daytitles[i]);*/
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
+		days(0);
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
 		String sunrises, sundowns;
 		sunrises = suntimes[0];
@@ -571,11 +572,13 @@ public class MainActivity extends Activity implements OnGestureListener,
 			if ((e1.getX() > e2.getX()) && (page < 2)) {
 				myViewFlipper.showNext();
 				page += 1;
+				days(page);
 			}
 			// 按下时的横坐标小于放开时的横坐标，从左向右滑动
 			else if ((e1.getX() < e2.getX()) && (page > 0)) {
 				myViewFlipper.showPrevious();
 				page -= 1;
+				days(page);
 			} else if ((e1.getX() < e2.getX()) && (page == 0)) {
 				slideMenu.showMenu();
 			}
@@ -583,6 +586,14 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 
 		return false;
+	}
+	
+	public void days(int day){
+		String viewdays = getDateStr(day);
+		viewday.setText("·"+viewdays);
+
+		String[] daytitles = {"今天","明天","后天"};
+		daytitle.setText(daytitles[day]);
 	}
 
 	/*
