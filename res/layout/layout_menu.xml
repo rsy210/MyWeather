@@ -23,7 +23,7 @@
     <ListView
         android:id="@+id/citylist"
          android:layout_width="240dip"
-        android:layout_height="50.0dip"
+        android:layout_height="fill_parent"
         android:background="@drawable/selector_category_item"
         android:clickable="true"
         android:drawableLeft="@drawable/ic_category_mark"
