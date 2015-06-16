@@ -97,21 +97,22 @@ public class WDataCache {
 		return db.query(DATABASE_TABLE, new String[]{ID,City,Weather,Index}, null, null, null, null, null);
 	}
 	//retreves a particular contact
-	public Cursor getContact(long rowId) throws SQLException
+	public Cursor getContact(String city) throws SQLException
 	{
 		Cursor mCursor = 
-				db.query(true, DATABASE_TABLE, new String[]{ KEY_ROWID,
-						 KEY_NAME, KEY_EMAIL}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
+				db.query(true, DATABASE_TABLE, new String[]{ ID,
+						 City, Weather, Index}, City + "=" + city, null, null, null, null, null);
 		if (mCursor != null)
 			mCursor.moveToFirst();
 		return mCursor;
 	}
 	//updates a contact
-	public boolean updateContact(long rowId, String name, String email)
+	public boolean updateContact( String city, String weather, String index)
 	{
 		ContentValues args = new ContentValues();
-		args.put(KEY_NAME, name);
-		args.put(KEY_EMAIL, email);
-		return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" +rowId, null) > 0;
+		args.put(City, city);
+		args.put(Weather, weather);
+		args.put(Index, index);
+		return db.update(DATABASE_TABLE, args, City + "=" +city, null) > 0;
 	}
 }
