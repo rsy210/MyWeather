@@ -8,12 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DataCache {
+public class WDataCache {
 
-	static final String KEY_ROWID = "_id";
-	static final String KEY_NAME = "name";
-	static final String KEY_EMAIL = "email";
-	static final String TAG = "DBAdapter";
+	static final String ID = "_id";
+	static final String City = "city";
+	static final String Weather = "weather";
+	static final String Index= "index";
+	
+	static final String TAG = "WDataCache";
 	
 	static final String DATABASE_NAME = "MyDB";
 	static final String DATABASE_TABLE = "contacts";
@@ -64,7 +66,7 @@ public class DataCache {
 	}
 	
 	//open the database
-	public DataCache open() throws SQLException
+	public WDataCache open() throws SQLException
 	{
 		db = DBHelper.getWritableDatabase();
 		return this;
@@ -76,22 +78,23 @@ public class DataCache {
 	}
 	
 	//insert a contact into the database
-	public long insertContact(String name, String email)
+	public long insertContact(String city, String weather, String index)
 	{
 		ContentValues initialValues = new ContentValues();
-		initialValues.put(KEY_NAME, name);
-		initialValues.put(KEY_EMAIL, email);
+		initialValues.put(City ,city);
+		initialValues.put(Weather ,weather);
+		initialValues.put(Index ,index);
 		return db.insert(DATABASE_TABLE, null, initialValues);
 	}
 	//delete a particular contact
 	public boolean deleteContact(long rowId)
 	{
-		return db.delete(DATABASE_TABLE, KEY_ROWID + "=" +rowId, null) > 0;
+		return db.delete(DATABASE_TABLE, City + "=" +rowId, null) > 0;
 	}
-	//retreves all the contacts
+	//Retrieves all the contacts
 	public Cursor getAllContacts()
 	{
-		return db.query(DATABASE_TABLE, new String[]{ KEY_ROWID,KEY_NAME,KEY_EMAIL}, null, null, null, null, null);
+		return db.query(DATABASE_TABLE, new String[]{ID,City,Weather,Index}, null, null, null, null, null);
 	}
 	//retreves a particular contact
 	public Cursor getContact(long rowId) throws SQLException
