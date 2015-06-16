@@ -127,6 +127,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		setContentView(R.layout.activity_main);
 
+		WDataCache WDataCache = new WDataCache();
+		
 		// ////////////////////////////////////////////////////////////////
 		// ªÒ»°URL
 		SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE);
