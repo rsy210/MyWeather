@@ -27,7 +27,7 @@ public class WDataCache {
 	private Context context;
 	
 	DatabaseHelper DBHelper;
-	SQLiteDatabase db;
+	SQLiteDatabase test;
 	
 	public WDataCache(Context cxt)
 	{
