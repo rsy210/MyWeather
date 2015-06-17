@@ -130,7 +130,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		WDataCache WDataCache = new WDataCache(MainActivity.this);
 		WDataCache.open();
 		
-		WDataCache.insertmyWeatherDB("–œÃ®","123", "456");
+		WDataCache.insertmyWeatherDB(cityList,"123", "456");
 		
 		// ////////////////////////////////////////////////////////////////
 		// ªÒ»°URL

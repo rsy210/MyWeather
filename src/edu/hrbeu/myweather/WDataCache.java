@@ -13,7 +13,7 @@ public class WDataCache {
 	static final String ID = "_id";
 	static final String City = "city";
 	static final String Weather = "weather";
-	static final String Index= "index";
+	static final String WIndex= "windex";
 	
 	static final String TAG = "WDataCache";
 	
@@ -23,7 +23,7 @@ public class WDataCache {
 	
 	static final String DATABASE_CREATE = 
 			"create table myWeatherDB( _id integer primary key autoincrement, " + 
-			"city text not null, weather text not null, index text not null);";
+			"city text not null, weather text not null, windex text not null);";
 	private Context context;
 	
 	DatabaseHelper DBHelper;
@@ -78,12 +78,12 @@ public class WDataCache {
 	}
 	
 	//insert a contact into the database
-	public long insertmyWeatherDB(String city, String weather, String index)
+	public long insertmyWeatherDB(String city, String weather, String windex)
 	{
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(City ,city);
 		initialValues.put(Weather ,weather);
-		initialValues.put(Index ,index);
+		initialValues.put(WIndex ,windex);
 		return db.insert(DATABASE_TABLE, null, initialValues);
 	}
 	//delete a particular contact
@@ -94,14 +94,14 @@ public class WDataCache {
 	//Retrieves all the contacts
 	public Cursor getAllmyWeatherDB()
 	{
-		return db.query(DATABASE_TABLE, new String[]{ID,City,Weather,Index}, null, null, null, null, null);
+		return db.query(DATABASE_TABLE, new String[]{ID,City,Weather,WIndex}, null, null, null, null, null);
 	}
 	//retreves a particular contact
 	public Cursor getmyWeatherDB(String city) throws SQLException
 	{
 		Cursor mCursor = 
 				db.query(true, DATABASE_TABLE, new String[]{ ID,
-						 City, Weather, Index}, City + "=" + city, null, null, null, null, null);
+						 City, Weather, WIndex}, City + "=" + city, null, null, null, null, null);
 		if (mCursor != null)
 			mCursor.moveToFirst();
 		return mCursor;
@@ -112,7 +112,7 @@ public class WDataCache {
 		ContentValues args = new ContentValues();
 		args.put(City, city);
 		args.put(Weather, weather);
-		args.put(Index, index);
+		args.put(WIndex, index);
 		return db.update(DATABASE_TABLE, args, City + "=" +city, null) > 0;
 	}
 }
