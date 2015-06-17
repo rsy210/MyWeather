@@ -72,6 +72,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	String url_i;
 
 	Button citybutton;
+	
+	String response;
 
 	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
 
@@ -130,9 +132,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 		WDataCache WDataCache = new WDataCache(MainActivity.this);
 		WDataCache.open();
 		
-		WDataCache.insertmyWeatherDB(cityList,"123", "456");
 		
-		// ////////////////////////////////////////////////////////////////
+		// ////////////////////////////////////////////////////////////////s
 		// 获取URL
 		SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE);
 		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);//当前显示的城市代码放在这了
@@ -234,7 +235,11 @@ public class MainActivity extends Activity implements OnGestureListener,
 				startActivity(intent);
 			}
 		});
-
+		
+		for(int i = 0;i < cityList.size();i++){
+			WDataCache.insertmyWeatherDB(cityList.get(i),response);
+		}
+		days(0);
 	}
 
 	@Override
@@ -260,7 +265,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 					HttpGet request = new HttpGet(url);
 					Log.v("response text", url);
 					// 发送GET请求，并将响应内容转换成字符串
-					String response = httpclient.execute(request,
+				 response = httpclient.execute(request,
 							new BasicResponseHandler());
 					Log.v("response text", response);
 
@@ -304,6 +309,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 			// TODO Auto-generated method stub
 			if (msg.what == 1) {
 				citytitle.setText(myWeather.city);
+				
 				changeview(view_today);
 				RefreshWeather(0);
 				changeview(view_tomorrow);
@@ -330,7 +336,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		String[] daytitles = {"今天","明天","后天"};
 		daytitle.setText(daytitles[i]);*/
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
-		days(0);
+		
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
 		String sunrises, sundowns;
 		sunrises = suntimes[0];
