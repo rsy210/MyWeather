@@ -127,6 +127,11 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		setContentView(R.layout.activity_main);
 
+		WDataCache WDataCache = new WDataCache(MainActivity.this);
+		WDataCache.open();
+		
+		WDataCache.insertmyWeatherDB("邢台","123", "456");
+		
 		// ////////////////////////////////////////////////////////////////
 		// 获取URL
 		SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE);
@@ -155,7 +160,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		// 用inflate(渲染)方法将布局文件变为View对象
 		view_today = factory.inflate(R.layout.view_today, null);
-		view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
+		view_tomorrow = factory.inflate(R.layout.view_tomorrow, null); 
 		view_afterday = factory.inflate(R.layout.view_afterday, null);
 
 		// 绑定inflate控件，否则无法使用它
