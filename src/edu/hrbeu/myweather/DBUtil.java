@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -24,8 +25,17 @@ public class DBUtil extends SQLiteOpenHelper {
 	private Context context;
 	public static String dbName = "weather.db";// 数据库的名字
 	private static String DATABASE_PATH;// 数据库在手机里的路径
+	
+	static final String CID = "c_id";
+	static final String MyCity = "mycity";
+	static final String CityCode = "cityCode";
+	static final String DATABASE_TABLE = "myCityDB";
+	static final String DATABASE_CREATE = 
+			"create table myCityDB( _id integer primary key autoincrement, " + 
+			"myCity text not null, cityCode text  );";
 
 	private SQLiteDatabase myDataBase;
+	SQLiteDatabase db;
 
 	public DBUtil(Context context) {
 
@@ -73,7 +83,7 @@ public class DBUtil extends SQLiteOpenHelper {
 	 * @return false or true
 	 */
 	public boolean checkDataBase() {
-		SQLiteDatabase db = null;
+		 db = null;
 		try {
 			String databaseFilename = DATABASE_PATH + dbName;
 			db = SQLiteDatabase.openDatabase(databaseFilename, null,
@@ -164,5 +174,47 @@ public class DBUtil extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	//insert a contact into the database
+	public  long insertmyCityDB(String mycity, String citycode)
+	{
+		ContentValues initialValues = new ContentValues();
+		initialValues.put(MyCity ,mycity);
+		initialValues.put(CityCode ,citycode);
+		return db.insert(DATABASE_TABLE, null, initialValues);
+	}
+	
+	
+	//delete a particular contact
+	public boolean deletemymyCityDB(long rowId)
+	{
+		return db.delete(DATABASE_TABLE, MyCity + "=" +rowId, null) > 0;
+	}
+	//Retrieves all the contacts
+	public Cursor getAllmyCityDB()
+	{
+		return db.query(DATABASE_TABLE, new String[]{CID,MyCity,CityCode}, null, null, null, null, null);
+	}
+	//retreves a particular contact
+	public Cursor getmyCityDB(String city) throws SQLException
+	{
+		Cursor cCursor = 
+				db.query(true, DATABASE_TABLE, new String[]{ CID,
+						 MyCity, CityCode}, MyCity + "='" + city+"'", null, null, null, null, null);
+		if (cCursor != null)
+			cCursor.moveToFirst();
+		
+		return cCursor;
+	}
+	
+	
+	//updates a contact
+	public boolean updatemyCityDB( String mycity, String citycode)
+	{
+		ContentValues args = new ContentValues();
+		args.put(MyCity, mycity);
+		args.put(CityCode, citycode);
+		return db.update(DATABASE_TABLE, args, MyCity + "='" + mycity+"'", null) > 0;
 	}
 }
