@@ -2,16 +2,10 @@ package edu.hrbeu.myweather;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-
-import edu.hrbeu.myweather.SlideMenu;
-import edu.hrbeu.myweather.R;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -22,9 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -72,8 +70,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 	String url_i;
 
 	Button citybutton;
-	
-	String response;
+
+	String weatherResponse;
+	String indexResponse;
+	WDataCache wDataCache;
 
 	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
 
@@ -118,7 +118,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	private View view_afterday;
 	private ListView cityLV;
 	private SharedPreferences sp2;
-	private ArrayList<String> cityList;
+	private ArrayList<String> cityArray;
 	private ArrayList<String> codeList;
 	private TextView citytitle;
 	private TextView daytitle;
@@ -129,25 +129,24 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		setContentView(R.layout.activity_main);
 
-		WDataCache WDataCache = new WDataCache(MainActivity.this);
-		WDataCache.open();
-		
-		
+		wDataCache = new WDataCache(MainActivity.this);
+		wDataCache.open();
+
 		// ////////////////////////////////////////////////////////////////s
 		// 获取URL
 		SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE);
-		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);//当前显示的城市代码放在这了
-		
+		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);// 当前显示的城市代码放在这了
+
 		// String areaid = sp.getString("citycode", "101010100");
 
 		Map<String, ?> cityMap = sp.getAll();// 获取sp中所有键值对
-		cityList = new ArrayList<String>();
+		cityArray = new ArrayList<String>();
 		codeList = new ArrayList<String>();
 
 		for (Map.Entry<String, ?> entry : cityMap.entrySet()) {
 			System.out.println("key= " + entry.getKey() + " and value= "
 					+ entry.getValue());
-			cityList.add(entry.getKey());
+			cityArray.add(entry.getKey());
 			codeList.add(entry.getValue().toString());
 		}
 
@@ -161,7 +160,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		// 用inflate(渲染)方法将布局文件变为View对象
 		view_today = factory.inflate(R.layout.view_today, null);
-		view_tomorrow = factory.inflate(R.layout.view_tomorrow, null); 
+		view_tomorrow = factory.inflate(R.layout.view_tomorrow, null);
 		view_afterday = factory.inflate(R.layout.view_afterday, null);
 
 		// 绑定inflate控件，否则无法使用它
@@ -172,17 +171,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 		ImageView menuImage = (ImageView) findViewById(R.id.title_bar_menu_btn);
 		menuImage.setOnClickListener(this);
 
-		
-		citytitle=(TextView) findViewById(R.id.citytitle);
-		daytitle=(TextView) findViewById(R.id.daytitle);
+		citytitle = (TextView) findViewById(R.id.citytitle);
+		daytitle = (TextView) findViewById(R.id.daytitle);
 		viewday = (TextView) findViewById(R.id.viewday);
-		
+
 		// //////////////////////////////////////////////////////////////
 		// 城市列表
 		cityLV = (ListView) findViewById(R.id.citylist);
 
 		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this,
-				R.layout.list_style, cityList);
+				R.layout.list_style, cityArray);
 
 		cityLV.setAdapter(cityAdapter);
 		cityLV.setOnItemClickListener(new OnItemClickListener() {
@@ -191,23 +189,24 @@ public class MainActivity extends Activity implements OnGestureListener,
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				
-				
+
 				Editor ed2 = sp2.edit();
 				ed2.putString("citycode", codeList.get(position));
-				ed2.putString("searchcity", cityList.get(position));
+				ed2.putString("searchcity", cityArray.get(position));
 				ed2.commit();
-				
-				//生成新的获取城市天气地址
+
+				// 生成新的获取城市天气地址
 				url_f = EncodeUtil.getUrl(codeList.get(position), "forecast_v");// 天气
 				url_i = EncodeUtil.getUrl(codeList.get(position), "index_v");// 指数
-				//获取新的城市天气数据
-				getWeatherDate(url_f, 1);
-				getWeatherDate(url_i, 2);
-				
-				if (slideMenu.isMenuShow()) 
+				// 获取新的城市天气数据
+				getWeatherDate(url_f, 1, cityArray.get(position));
+				getWeatherDate(url_i, 2, cityArray.get(position));
+
+				if (slideMenu.isMenuShow())
 					slideMenu.hideMenu();
 				
+				noNetView(cityArray.get(position));
+
 			}
 		});
 
@@ -235,23 +234,63 @@ public class MainActivity extends Activity implements OnGestureListener,
 				startActivity(intent);
 			}
 		});
-		
-		for(int i = 0;i < cityList.size();i++){
-			WDataCache.insertmyWeatherDB(cityList.get(i),response);
-		}
+
 		days(0);
+	}
+
+	/* 检测网络连接状态 */
+	public boolean CheckNetWork() {
+		boolean result;
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo netinfo = cm.getActiveNetworkInfo();
+		if (netinfo != null && netinfo.isConnected()) {
+			result = true;/* The net was connected */
+		} else {
+			result = false;/* The net was bad! */
+
+		}
+		return result;
 	}
 
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		getWeatherDate(url_f, 1);
-		getWeatherDate(url_i, 2);
+		String nowCityV = sp2.getString("searchcity", "北京");
+		getWeatherDate(url_f, 1, nowCityV);
+		getWeatherDate(url_i, 2, nowCityV);
+		
+		noNetView(nowCityV);
+		
 		System.out.println("onResume");
 	}
+	
+	public void noNetView(String city){
+		boolean result = CheckNetWork();
+		if (!result) {
+			Cursor wCursor = wDataCache.getmyWeatherDB(city);
+			String weatherColumn = wCursor.getString(wCursor
+					.getColumnIndex("weather"));
+			String indexColumn = wCursor.getString(wCursor
+					.getColumnIndex("windex"));
+			myWeather = getWeather(weatherColumn);
+			myIndex = getIndex(indexColumn);
+			
+			citytitle.setText(myWeather.city);
 
-	public void getWeatherDate(final String url, final int num) {
+			changeview(view_today);
+			RefreshWeather(0);
+			changeview(view_tomorrow);
+			RefreshWeather(1);
+			changeview(view_afterday);
+			RefreshWeather(2);// 更新界面显示
+			RefreshIndex();
+		}
+	}
+
+	public void getWeatherDate(final String url, final int num,
+			final String city) {
 		Thread newThread; // 声明一个子线程
 
 		newThread = new Thread(new Runnable() {
@@ -265,14 +304,24 @@ public class MainActivity extends Activity implements OnGestureListener,
 					HttpGet request = new HttpGet(url);
 					Log.v("response text", url);
 					// 发送GET请求，并将响应内容转换成字符串
-				 response = httpclient.execute(request,
+					String response = httpclient.execute(request,
 							new BasicResponseHandler());
 					Log.v("response text", response);
 
-					if (num == 1)
+					if (num == 1){
 						myWeather = getWeather(response);
-					else
+					}
+					else{
 						myIndex = getIndex(response);
+					}
+					
+					
+					Cursor wCursor = wDataCache.getmyWeatherDB(city);
+					if(wCursor == null || wCursor.getCount()<=0){
+					wDataCache.insertmyWeatherDB(city, weatherResponse,
+							indexResponse);
+					}else{wDataCache.updatemyWeatherDB(city, weatherResponse,
+							indexResponse);}
 
 					Message m = new Message();
 					m.what = num;
@@ -291,8 +340,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	public void changeview(View view) {
 		sunrise = (TextView) view.findViewById(R.id.sunrise);
 		sundown = (TextView) view.findViewById(R.id.sundown);
-		/*date = (TextView) view.findViewById(R.id.date);*/
-		
+		/* date = (TextView) view.findViewById(R.id.date); */
+
 		temperature = (TextView) view.findViewById(R.id.temperature);
 		windD = (TextView) view.findViewById(R.id.windD);
 		windP = (TextView) view.findViewById(R.id.windP);
@@ -309,7 +358,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 			// TODO Auto-generated method stub
 			if (msg.what == 1) {
 				citytitle.setText(myWeather.city);
-				
+
 				changeview(view_today);
 				RefreshWeather(0);
 				changeview(view_tomorrow);
@@ -328,15 +377,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	public void RefreshWeather(int i) {
 		// TODO Auto-generated method stub
-		/*date.setText(myWeather.date);*/
-        
-		/*String viewdays = getDateStr(i);
-		viewday.setText(viewdays);
+		/* date.setText(myWeather.date); */
 
-		String[] daytitles = {"今天","明天","后天"};
-		daytitle.setText(daytitles[i]);*/
+		/*
+		 * String viewdays = getDateStr(i); viewday.setText(viewdays);
+		 * 
+		 * String[] daytitles = {"今天","明天","后天"};
+		 * daytitle.setText(daytitles[i]);
+		 */
 		// 分隔出日出日落时间sunrises，sundowns(字符串格式)
-		
+
 		String[] suntimes = myWeather.suntime[0].split("\\|", 2);
 		String sunrises, sundowns;
 		sunrises = suntimes[0];
@@ -364,7 +414,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherD[i])]);
-			temperature.setText(myWeather.temperatureD[i]+"°");
+			temperature.setText(myWeather.temperatureD[i] + "°");
 		} else {
 			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
@@ -375,7 +425,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherN[i])]);
-			temperature.setText(myWeather.temperatureN[i]+"°");
+			temperature.setText(myWeather.temperatureN[i] + "°");
 		}
 	}
 
@@ -387,6 +437,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	 */
 	public Weather getWeather(String strResult) {
 
+		weatherResponse = strResult;
 		try {
 			String suntime;
 			// /解析
@@ -433,7 +484,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	 * @return
 	 */
 	public Index getIndex(String strResult) {
-
+		indexResponse = strResult;
 		try {
 			// /解析
 			JSONObject jsonObject;
@@ -598,12 +649,12 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		return false;
 	}
-	
-	public void days(int day){
-		String viewdays = getDateStr(day);
-		viewday.setText("·"+viewdays);
 
-		String[] daytitles = {"今天","明天","后天"};
+	public void days(int day) {
+		String viewdays = getDateStr(day);
+		viewday.setText("·" + viewdays);
+
+		String[] daytitles = { "今天", "明天", "后天" };
 		daytitle.setText(daytitles[day]);
 	}
 
