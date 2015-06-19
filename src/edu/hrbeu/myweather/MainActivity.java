@@ -133,23 +133,20 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		wDataCache = new WDataCache(MainActivity.this);
 		wDataCache.open();
-		
 
 		// ////////////////////////////////////////////////////////////////s
 		// 获取URL
-		/*SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE);*/
+		/* SharedPreferences sp = getSharedPreferences("mycity", MODE_PRIVATE); */
 		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);// 当前显示的城市代码放在这了
 
 		// String areaid = sp.getString("citycode", "101010100");
 
-		
-
-//		for (Map.Entry<String, ?> entry : cityMap.entrySet()) {
-//			System.out.println("key= " + entry.getKey() + " and value= "
-//					+ entry.getValue());
-//			cityArray.add(entry.getKey());
-//			codeList.add(entry.getValue().toString());
-//		}
+		// for (Map.Entry<String, ?> entry : cityMap.entrySet()) {
+		// System.out.println("key= " + entry.getKey() + " and value= "
+		// + entry.getValue());
+		// cityArray.add(entry.getKey());
+		// codeList.add(entry.getValue().toString());
+		// }
 
 		String areaid = sp2.getString("citycode", "101010100");
 
@@ -183,21 +180,21 @@ public class MainActivity extends Activity implements OnGestureListener,
 		cityArray = new ArrayList<String>();
 		codeList = new ArrayList<String>();
 		Cursor cCursor = wDataCache.getAllmyWeatherDB();
-		
-		while (cCursor.moveToNext()) {  
+
+		while (cCursor.moveToNext()) {
 			cityArray.add(cCursor.getString(cCursor.getColumnIndex("city")));
 			codeList.add(cCursor.getString(cCursor.getColumnIndex("citycode")));
-        }  
-		
+		}
+
 		startManagingCursor(cCursor);
 
 		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this,
 				R.layout.list_style, cityArray);
-//		ListAdapter cityAdapter = new SimpleCursorAdapter(this,
-//				android.R.layout.simple_expandable_list_item_1, 
-//				cCursor,
-//				new String[]{myDbHelper.MyCity}, 
-//                new int[]{R.id.citylist});
+		// ListAdapter cityAdapter = new SimpleCursorAdapter(this,
+		// android.R.layout.simple_expandable_list_item_1,
+		// cCursor,
+		// new String[]{myDbHelper.MyCity},
+		// new int[]{R.id.citylist});
 
 		cityLV.setAdapter(cityAdapter);
 		cityLV.setOnItemClickListener(new OnItemClickListener() {
@@ -216,8 +213,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 				url_f = EncodeUtil.getUrl(codeList.get(position), "forecast_v");// 天气
 				url_i = EncodeUtil.getUrl(codeList.get(position), "index_v");// 指数
 				// 获取新的城市天气数据
-				getWeatherDate(url_f, 1, cityArray.get(position),codeList.get(position));
-				getWeatherDate(url_i, 2, cityArray.get(position),codeList.get(position));
+				getWeatherDate(url_f, 1, cityArray.get(position),
+						codeList.get(position));
+				getWeatherDate(url_i, 2, cityArray.get(position),
+						codeList.get(position));
 
 				if (slideMenu.isMenuShow())
 					slideMenu.hideMenu();
@@ -257,7 +256,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	private void startManagingCursor(String cCursor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/* 检测网络连接状态 */
@@ -281,8 +280,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 		super.onResume();
 		String nowCityV = sp2.getString("searchcity", "北京");
 		String nowCityCode = sp2.getString("citycode", "101010100");
-		getWeatherDate(url_f, 1, nowCityV,nowCityCode);
-		getWeatherDate(url_i, 2, nowCityV,nowCityCode);
+		getWeatherDate(url_f, 1, nowCityV, nowCityCode);
+		getWeatherDate(url_i, 2, nowCityV, nowCityCode);
 
 		noNetView(nowCityV);
 
@@ -313,7 +312,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	}
 
 	public void getWeatherDate(final String url, final int num,
-			final String city,final String citycode) {
+			final String city, final String citycode) {
 		Thread newThread; // 声明一个子线程
 
 		newThread = new Thread(new Runnable() {
@@ -339,11 +338,11 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 					Cursor wCursor = wDataCache.getmyWeatherDB(city);
 					if (wCursor == null || wCursor.getCount() <= 0) {
-						wDataCache.insertmyWeatherDB(city,citycode, weatherResponse,
-								indexResponse);
+						wDataCache.insertmyWeatherDB(city, citycode,
+								weatherResponse, indexResponse);
 					} else {
-						wDataCache.updatemyWeatherDB(city, citycode,weatherResponse,
-								indexResponse);
+						wDataCache.updatemyWeatherDB(city, citycode,
+								weatherResponse, indexResponse);
 					}
 
 					Message m = new Message();
@@ -437,7 +436,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherD[i])]);
-			temperature.setText(myWeather.temperatureD[i] + "°");
+			temperature.setText(myWeather.temperatureD[i] + "°" + "/"
+					+ myWeather.temperatureN[i] + "°");
 		} else {
 			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
@@ -448,7 +448,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherN[i])]);
-			temperature.setText(myWeather.temperatureN[i] + "°");
+			temperature.setText(myWeather.temperatureD[i] + "°" + "/"
+					+ myWeather.temperatureN[i] + "°");
 		}
 	}
 

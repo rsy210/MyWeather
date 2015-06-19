@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="00°"
-            android:textSize="75dp" />
+            android:textSize="50dp" />
         <LinearLayout
             android:id="@+id/wind"
             android:layout_width="wrap_content"
