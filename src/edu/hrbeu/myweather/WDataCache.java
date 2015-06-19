@@ -12,6 +12,7 @@ public class WDataCache {
 
 	static final String ID = "_id";
 	static final String City = "city";
+	static final String CityCode = "citycode";
 	static final String Weather = "weather";
 	static final String WIndex= "windex";
 	
@@ -23,7 +24,7 @@ public class WDataCache {
 	
 	static final String DATABASE_CREATE = 
 			"create table myWeatherDB( _id integer primary key autoincrement, " + 
-			"city text not null, weather text  ,windex text  );";
+			"city text not null, citycode text, weather text  ,windex text  );";
 	private Context context;
 	
 	DatabaseHelper DBHelper;
@@ -78,10 +79,11 @@ public class WDataCache {
 	}
 	
 	//insert a contact into the database
-	public  long insertmyWeatherDB(String city, String weather,String windex)
+	public  long insertmyWeatherDB(String city,String citycode,String weather,String windex)
 	{
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(City ,city);
+		initialValues.put(CityCode ,citycode);
 		initialValues.put(Weather ,weather);
 		initialValues.put(WIndex ,windex);
 		return db.insert(DATABASE_TABLE, null, initialValues);
@@ -96,14 +98,14 @@ public class WDataCache {
 	//Retrieves all the contacts
 	public Cursor getAllmyWeatherDB()
 	{
-		return db.query(DATABASE_TABLE, new String[]{ID,City,Weather,WIndex}, null, null, null, null, null);
+		return db.query(DATABASE_TABLE, new String[]{ID,City,CityCode,Weather,WIndex}, null, null, null, null, null);
 	}
 	//retreves a particular contact
 	public Cursor getmyWeatherDB(String city) throws SQLException
 	{
 		Cursor wCursor = 
 				db.query(true, DATABASE_TABLE, new String[]{ ID,
-						 City, Weather, WIndex}, City + "='" + city+"'", null, null, null, null, null);
+						 City,CityCode, Weather, WIndex}, City + "='" + city+"'", null, null, null, null, null);
 		if (wCursor != null)
 			wCursor.moveToFirst();
 		
@@ -112,10 +114,11 @@ public class WDataCache {
 	
 	
 	//updates a contact
-	public boolean updatemyWeatherDB( String city, String weather, String windex)
+	public boolean updatemyWeatherDB( String city,String citycode, String weather, String windex)
 	{
 		ContentValues args = new ContentValues();
 		args.put(City, city);
+		args.put(CityCode, citycode);
 		args.put(Weather, weather);
 		args.put(WIndex, windex);
 		return db.update(DATABASE_TABLE, args, City + "='" + city+"'", null) > 0;

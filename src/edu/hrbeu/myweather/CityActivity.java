@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,23 +23,28 @@ public class CityActivity extends Activity {
 	EditText searchcity;
 	Button searchbutton;
 	ListView listview;
-	SharedPreferences sp;
+	/*SharedPreferences sp;*/
 	SharedPreferences sp2;
 	DBUtil myDbHelper;
+	WDataCache wDataCache;
+
+	String mycityname;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_city);
 
-		sp = getSharedPreferences("mycity", MODE_PRIVATE);
+		/*sp = getSharedPreferences("mycity", MODE_PRIVATE);*/
 		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);
 
 		searchcity = (EditText) findViewById(R.id.searchcity);
-		searchbutton = (Button) findViewById(R.id.searchbutton);
 
+		searchbutton = (Button) findViewById(R.id.searchbutton);
 		// DBUtil myDbHelper = new DBUtil(null);
 		myDbHelper = new DBUtil(this);
+		wDataCache = new WDataCache(this);
+		wDataCache.open();
 
 		try {
 			myDbHelper.createDataBase();
@@ -57,20 +63,30 @@ public class CityActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				// 查询函数，正常返回string，没有则返回null
-				String citycode = myDbHelper.queryOneData(searchcity.getText()
-						.toString());
 
+				mycityname = searchcity.getText().toString();
+				String citycode = myDbHelper.queryOneData(mycityname);
 				if (citycode != null) {
-					Editor ed = sp.edit();
+					/*Editor ed = sp.edit();
 					ed.putString(searchcity.getText().toString(), citycode);
 					// ed.putString("searchcity", searchcity.getText()
 					// .toString());
-					ed.commit();
+					ed.commit();*/
 
 					Editor ed2 = sp2.edit();
 					ed2.putString("citycode", citycode);
 					ed2.putString("searchcity", searchcity.getText().toString());
 					ed2.commit();
+
+					Cursor cCursor = wDataCache.getmyWeatherDB(mycityname);
+					if (cCursor == null || cCursor.getCount() <= 0) {
+						wDataCache.insertmyWeatherDB(mycityname, citycode,
+								null, null);
+					} else {
+						Toast.makeText(CityActivity.this,
+								"你已经添加" + mycityname + "了，快去看看吧",
+								Toast.LENGTH_SHORT).show();
+					}
 
 					Intent intent = new Intent(CityActivity.this,
 							MainActivity.class);
