@@ -9,6 +9,8 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +24,7 @@ public class CityActivity extends Activity {
 
 	EditText searchcity;
 	Button searchbutton;
-	ListView listview;
+	ListView searchlist;
 	/*SharedPreferences sp;*/
 	SharedPreferences sp2;
 	DBUtil myDbHelper;
@@ -39,6 +41,8 @@ public class CityActivity extends Activity {
 		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);
 
 		searchcity = (EditText) findViewById(R.id.searchcity);
+		
+		searchlist = (ListView) findViewById(R.id.searchlist);
 
 		searchbutton = (Button) findViewById(R.id.searchbutton);
 		// DBUtil myDbHelper = new DBUtil(null);
@@ -99,8 +103,56 @@ public class CityActivity extends Activity {
 				}
 			}
 		});
+		
+		
+		
+		searchcity.addTextChangedListener((new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				String searchcityV =  searchcity.getText().toString();
+				if(searchcityV !=null && !"".equals(searchcityV.trim())){
+					/*Log.i(TAG , " searchcityV:"+searchcityV);*/
+					List<Map<String , String>> lst = foursquared.getSelectStock(key);//根据关键字查询股票代码
+					StockListAdapter stockAdapter = new StockListAdapter(LoadableStockListActivity.this , lst);
+					listView.setAdapter(stockAdapter);
+				}else{
+					listView.setAdapter(null);
+					/*http://www.myexception.cn/android/456537.html
+*/				}
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		}));
+		
+		//查询所有股票相关数据
+				List<Map<String , String>> lst = foursquared.getSelectStock(null);
+				//自定义ListView适配器
+		        StockListAdapter stockAdapter = new StockListAdapter(this , lst);
+		        //设置适配器
+		        listView.setAdapter(stockAdapter);
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
