@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -69,7 +71,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	TextView sundown;
 	TextView sunrise;
-	
+
 	String areaid;
 	String nowCityN;
 
@@ -81,9 +83,9 @@ public class MainActivity extends Activity implements OnGestureListener,
 	String weatherResponse;
 	String indexResponse;
 	WDataCache wDataCache;
-	
+
 	String tempByBD;
-	
+
 	PopupWindow popWindow;
 
 	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
@@ -173,9 +175,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		// 绑定inflate控件，否则无法使用它
 		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
-		
+
 		nowtemp = (TextView) view_today.findViewById(R.id.nowtemp);
-		
 
 		/* pageControl = (PageControlView) findViewById(R.id.); */
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
@@ -192,7 +193,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		cityArray = new ArrayList<String>();
 		codeList = new ArrayList<String>();
-		
 
 		Cursor cCursor = wDataCache.getAllmyWeatherDB();
 		while (cCursor.moveToNext()) {
@@ -201,7 +201,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 
 		startManagingCursor(cCursor);
-//创建数组型适配器
+		// 创建数组型适配器
 		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this,
 				R.layout.list_style, cityArray);
 		// ListAdapter cityAdapter = new SimpleCursorAdapter(this,
@@ -209,7 +209,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// cCursor,
 		// new String[]{myDbHelper.MyCity},
 		// new int[]{R.id.citylist});
-//显示到列表
+		// 显示到列表
 		cityLV.setAdapter(cityAdapter);
 		cityLV.setOnItemClickListener(new OnItemClickListener() {
 
@@ -292,7 +292,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		
+
 		getWeatherDate(url_f, 1, nowCityN, areaid);
 		getWeatherDate(url_i, 2, nowCityN, areaid);
 
@@ -324,22 +324,20 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 	}
 
-	
-	
 	public void getWeatherDate(final String url, final int num,
 			final String city, final String citycode) {
 		Thread newThread; // 声明一个子线程
-		Log.i("BBBB", "citycode:"+citycode);
+		Log.i("BBBB", "citycode:" + citycode);
 		newThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// 这里写入子线程需要做的工作
-				
-				Log.i("CCCC", "citycode:"+citycode);
-				
-			String jsonResultByBD = getWeatherByBD(citycode);
-			tempByBD=getTempWeatherByBD(jsonResultByBD);
-				
+
+				Log.i("CCCC", "citycode:" + citycode);
+
+				String jsonResultByBD = getWeatherByBD(citycode);
+				tempByBD = getTempWeatherByBD(jsonResultByBD);
+
 				try {
 					// 创建一个默认的HttpClient
 					HttpClient httpclient = new DefaultHttpClient();
@@ -401,10 +399,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 			// TODO Auto-generated method stub
 			if (msg.what == 1) {
 				citytitle.setText(myWeather.city);
-				nowtemp.setText(tempByBD+"°");
+				nowtemp.setText(tempByBD + "°");
 
 				changeview(view_today);
-				
+
 				RefreshWeather(0);
 				changeview(view_tomorrow);
 				RefreshWeather(1);
@@ -462,14 +460,11 @@ public class MainActivity extends Activity implements OnGestureListener,
 					.parseInt(myWeather.weatherD[i])]);
 			tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
 					+ myWeather.temperatureN[i] + "°");
-			
-			
+
 			Editor ed = sp.edit();
 			ed.putString("temperatureD", myWeather.temperatureD[0]);
 			ed.commit();
-			
-			
-			
+
 		} else {
 			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
@@ -480,12 +475,15 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherN[i])]);
-			if(i == 0){
-				String temperatureD = sp.getString("temperatureD", myWeather.temperatureD[0]);
-			tempHL.setText(temperatureD + "°" + "/"
-					+ myWeather.temperatureN[i] + "°");}
-			else{tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
-					+ myWeather.temperatureN[i] + "°");}
+			if (i == 0) {
+				String temperatureD = sp.getString("temperatureD",
+						myWeather.temperatureD[0]);
+				tempHL.setText(temperatureD + "°" + "/"
+						+ myWeather.temperatureN[i] + "°");
+			} else {
+				tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
+						+ myWeather.temperatureN[i] + "°");
+			}
 		}
 	}
 
@@ -537,17 +535,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 		return null;
 	}
 
-	public String getWeatherByBD(String cityid){
-		
+	public String getWeatherByBD(String cityid) {
+
 		String httpUrl = "http://apis.baidu.com/apistore/weatherservice/cityid";
-		String httpArg = "cityid="+cityid;
+		String httpArg = "cityid=" + cityid;
 		String jsonResult = EncodeUtilByBD.request(httpUrl, httpArg);
 
-		System.out.println("baidu:"+jsonResult);
+		System.out.println("baidu:" + jsonResult);
 		return jsonResult;
 	}
-	
-		
+
 	public String getTempWeatherByBD(String strResult) {
 
 		try {
@@ -566,8 +563,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * 获取天气指数信息
 	 * 
@@ -621,82 +617,80 @@ public class MainActivity extends Activity implements OnGestureListener,
 				+ myIndex.i_5[1]);
 		i3.setText(myIndex.i_c[2] + ":" + myIndex.i_l[2] + "\n"
 				+ myIndex.i_5[2]);
-		
-		
-		
-		
-		/////////////////////////////////////////////////////////
-		
+
+		// ///////////////////////////////////////////////////////
+
 		i1.setOnLongClickListener(new OnLongClickListener() {
-			
+
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-//				new AlertDialog.Builder(MainActivity.this)    
-//				                .setMessage(myIndex.i_5[0])  
-//				                .show();  
-				getPopupWindowInstance(myIndex.i_5[0]);
-//				popWindow.showAsDropDown(v);
+				// new AlertDialog.Builder(MainActivity.this)
+				// .setMessage(myIndex.i_5[0])
+				// .show();
+				getPopupWindowInstance(myIndex.i_5[0], v);
+				// popWindow.showAsDropDown(v);
 				return false;
 			}
 		});
 	}
-	/* 
-     * 获取PopupWindow实例 
-     */  
-	 private void getPopupWindowInstance(String text) {  
-	        if (null != popWindow) {  
-	        	popWindow.dismiss();  
-	            return;  
-	        } else {  
-	        	PopuptWindow(text);  
-	        }  
-	    }  
-	/* 
-     * 创建PopupWindow 
-     */  
-    private void PopuptWindow(String text) {  
-    	 LayoutInflater layoutInflater = LayoutInflater.from(this); 
-    	 /*LayoutInflater layoutInflater = (LayoutInflater) (MainActivity.this)
-                 .getSystemService(LAYOUT_INFLATER_SERVICE);*/
-         // 获取自定义布局文件poplayout.xml的视图
-         View popview = layoutInflater.inflate(R.layout.i_popview, null);
-        popWindow = new PopupWindow(popview,
-        		 300,300,true);
-        popWindow.setOutsideTouchable(true);
-        popWindow.setTouchable(true);
-        popWindow.setTouchInterceptor(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if(event.getAction()==MotionEvent.ACTION_OUTSIDE)
-					popWindow.dismiss();
-				return false;
-			}
-		});
-         //规定弹窗的位置
-         popWindow.showAtLocation(findViewById(R.id.view_today), Gravity.BOTTOM,
-                0, 0);
-         //PopupWindow里的
-         TextView i1pop = (TextView) popview.findViewById(R.id.i1pop);
-         i1pop.setText(text);
-       /*  i2 = (TextView) popview.findViewById(R.id.i2);
-         i3 = (TextView) popview.findViewById(R.id.i3);*/
-        
-  
-        // 创建一个PopupWindow  
-        // 参数1：contentView 指定PopupWindow的内容  
-        // 参数2：width 指定PopupWindow的width  
-        // 参数3：height 指定PopupWindow的height  
-//        mPopupWindow = new PopupWindow(popupWindow, 100, 130);  
-  
-/*        // 获取屏幕和PopupWindow的width和height  
-        mScreenWidth = getWindowManager().getDefaultDisplay().getWidth();  
-        mScreenWidth = getWindowManager().getDefaultDisplay().getHeight();  
-        mPopupWindowWidth = mPopupWindow.getWidth();  
-        mPopupWindowHeight = mPopupWindow.getHeight(); */ 
-    }  
+
+	/*
+	 * 获取PopupWindow实例
+	 */
+	private void getPopupWindowInstance(String text, View v) {
+		// if (null != popWindow) {
+		// popWindow.dismiss();
+		// return;
+		// } else {
+		PopuptWindow(text, v);
+		// }
+	}
+
+	/*
+	 * 创建PopupWindow
+	 */
+	private void PopuptWindow(String text, View v) {
+		LayoutInflater layoutInflater = LayoutInflater.from(this);
+		/*
+		 * LayoutInflater layoutInflater = (LayoutInflater) (MainActivity.this)
+		 * .getSystemService(LAYOUT_INFLATER_SERVICE);
+		 */
+		// 获取自定义布局文件poplayout.xml的视图
+		View popview = layoutInflater.inflate(R.layout.i_popview, null);
+		popWindow = new PopupWindow(popview,
+				v.getWidth(),
+				WindowManager.LayoutParams.WRAP_CONTENT, true);
+		popWindow.setOutsideTouchable(true);
+		popWindow.setBackgroundDrawable(new BitmapDrawable());
+		// 规定弹窗的位置
+		
+		int[] location = new int[2];
+		v.getLocationOnScreen(location);
+		popWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0],
+				location[1] + (popWindow.getHeight())/2);
+		// PopupWindow里的
+		TextView i1pop = (TextView) popview.findViewById(R.id.i1pop);
+		i1pop.setText(text);
+		/*
+		 * i2 = (TextView) popview.findViewById(R.id.i2); i3 = (TextView)
+		 * popview.findViewById(R.id.i3);
+		 */
+
+		// 创建一个PopupWindow
+		// 参数1：contentView 指定PopupWindow的内容
+		// 参数2：width 指定PopupWindow的width
+		// 参数3：height 指定PopupWindow的height
+		// mPopupWindow = new PopupWindow(popupWindow, 100, 130);
+
+		/*
+		 * // 获取屏幕和PopupWindow的width和height mScreenWidth =
+		 * getWindowManager().getDefaultDisplay().getWidth(); mScreenWidth =
+		 * getWindowManager().getDefaultDisplay().getHeight(); mPopupWindowWidth
+		 * = mPopupWindow.getWidth(); mPopupWindowHeight =
+		 * mPopupWindow.getHeight();
+		 */
+	}
 
 	/**
 	 * 将中文乱码转换为正常编码
