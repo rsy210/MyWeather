@@ -1,6 +1,7 @@
 package edu.hrbeu.myweather;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,40 +12,59 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.location.LocationClientOption.LocationMode;
 
 public class CityActivity extends Activity {
 
 	EditText searchcity;
-	Button searchbutton;
 	ListView searchlist;
-	/*SharedPreferences sp;*/
+	/* SharedPreferences sp; */
 	SharedPreferences sp2;
 	DBUtil myDbHelper;
 	WDataCache wDataCache;
 
 	String mycityname;
 
+	ArrayList<String> nowlists;
+
+	TextView myLocation;
+	public LocationClient mLocationClient = null;
+	public BDLocationListener myListener = new MyLocationListener();
+	String locaName;
+
+	TextView hotcity11;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_city);
+		// 隐藏软键盘
+		getWindow().setSoftInputMode(
+		WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-		/*sp = getSharedPreferences("mycity", MODE_PRIVATE);*/
+		/* sp = getSharedPreferences("mycity", MODE_PRIVATE); */
 		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);
 
 		searchcity = (EditText) findViewById(R.id.searchcity);
-		
+
 		searchlist = (ListView) findViewById(R.id.searchlist);
 
-		searchbutton = (Button) findViewById(R.id.searchbutton);
 		// DBUtil myDbHelper = new DBUtil(null);
 		myDbHelper = new DBUtil(this);
 		wDataCache = new WDataCache(this);
@@ -61,115 +81,233 @@ public class CityActivity extends Activity {
 			throw sqle;
 		}
 
-		searchbutton.setOnClickListener(new OnClickListener() {
+		/*
+		 * searchbutton.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { // TODO Auto-generated method
+		 * stub // 查询函数，正常返回string，没有则返回null
+		 * 
+		 * mycityname = searchcity.getText().toString(); addCity(mycityname); }
+		 * });
+		 */
+
+		searchcity.addTextChangedListener((new TextWatcher() {
 
 			@Override
-			public void onClick(View v) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 				// TODO Auto-generated method stub
-				// 查询函数，正常返回string，没有则返回null
+				String searchcityV = searchcity.getText().toString();
+				if (searchcityV != null && !"".equals(searchcityV.trim())) {
+					// Log.i(TAG , " searchcityV:"+searchcityV);
+					nowlists = myDbHelper.selectCity(searchcityV);// 根据关键字查询
+					ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+							CityActivity.this, R.layout.list_style, nowlists);
+					searchlist.setAdapter(arrayAdapter);
+					searchlist
+							.setOnItemClickListener(new OnItemClickListener() {
 
-				mycityname = searchcity.getText().toString();
-				String citycode = myDbHelper.queryOneData(mycityname);
-				if (citycode != null) {
-					/*Editor ed = sp.edit();
-					ed.putString(searchcity.getText().toString(), citycode);
-					// ed.putString("searchcity", searchcity.getText()
-					// .toString());
-					ed.commit();*/
-
-					Editor ed2 = sp2.edit();
-					ed2.putString("citycode", citycode);
-					ed2.putString("searchcity", searchcity.getText().toString());
-					ed2.commit();
-
-					Cursor cCursor = wDataCache.getmyWeatherDB(mycityname);
-					if (cCursor == null || cCursor.getCount() <= 0) {
-						wDataCache.insertmyWeatherDB(mycityname, citycode,
-								null, null);
-					} else {
-						Toast.makeText(CityActivity.this,
-								"你已经添加" + mycityname + "了，快去看看吧",
-								Toast.LENGTH_SHORT).show();
-					}
-
-					Intent intent = new Intent(CityActivity.this,
-							MainActivity.class);
-					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					startActivity(intent);
+								@Override
+								public void onItemClick(AdapterView<?> parent,
+										View view, int position, long id) {
+									// TODO Auto-generated method stub
+									String cityname = nowlists.get(position);
+									addCity(cityname);
+								}
+							});
 				} else {
-					Toast.makeText(CityActivity.this, "没有找到对应城市",
-							Toast.LENGTH_SHORT).show();
-					searchcity.setText("");
+					searchlist.setAdapter(null);
 				}
 			}
-		});
-		
-		
-		
-		searchcity.addTextChangedListener((new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-				String searchcityV =  searchcity.getText().toString();
-				if(searchcityV !=null && !"".equals(searchcityV.trim())){
-					/*Log.i(TAG , " searchcityV:"+searchcityV);*/
-					List<Map<String , String>> lst = foursquared.getSelectStock(key);//根据关键字查询股票代码
-					StockListAdapter stockAdapter = new StockListAdapter(LoadableStockListActivity.this , lst);
-					listView.setAdapter(stockAdapter);
-				}else{
-					listView.setAdapter(null);
-					/*http://www.myexception.cn/android/456537.html
-*/				}
-			}
-			
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		}));
-		
-		//查询所有股票相关数据
-				List<Map<String , String>> lst = foursquared.getSelectStock(null);
-				//自定义ListView适配器
-		        StockListAdapter stockAdapter = new StockListAdapter(this , lst);
-		        //设置适配器
-		        listView.setAdapter(stockAdapter);
+
+		/*
+		 * // 注册广播 IntentFilter filter = new IntentFilter();
+		 * filter.addAction(Common.LOCATION_ACTION); this.registerReceiver(new
+		 * LocationBroadcastReceiver(), filter);
+		 * 
+		 * // 启动服务 Intent intent = new Intent(); intent.setClass(this,
+		 * LocationSvc.class); startService(intent);
+		 */
+		myLocation = (TextView) findViewById(R.id.mylocation);
+		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
+		mLocationClient.registerLocationListener(myListener); // 注册监听函数
+		myLocation.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				InitLocation();
+				mLocationClient.start();
+
+			}
+		});
+
+		hotcity11 = (TextView) findViewById(R.id.hotcity11);
+		hotcity11.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String hotcityname11 = hotcity11.getText().toString();
+				addCity(hotcityname11);
+			}
+		});
+
+		/*
+		 * // 等待提示 dialog = new ProgressDialog(this);
+		 * dialog.setMessage("正在定位..."); dialog.setCancelable(true);
+		 * dialog.show();
+		 */
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.city, menu);
-		return true;
-	}
+	public void addCity(String mycityname) {
+		String citycode = myDbHelper.queryOneData(mycityname);
+		if (citycode != null) {
+			/*
+			 * Editor ed = sp.edit();
+			 * ed.putString(searchcity.getText().toString(), citycode); //
+			 * ed.putString("searchcity", searchcity.getText() // .toString());
+			 * ed.commit();
+			 */
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+			Editor ed2 = sp2.edit();
+			ed2.putString("citycode", citycode);
+			ed2.putString("searchcity", mycityname);
+			ed2.commit();
+
+			Cursor cCursor = wDataCache.getmyWeatherDB(citycode);
+			if (cCursor == null || cCursor.getCount() <= 0) {
+				wDataCache.insertmyWeatherDB(mycityname, citycode, null, null);
+			} else {
+				Toast.makeText(CityActivity.this,
+						"你已经添加" + mycityname + "了，快去看看吧", Toast.LENGTH_SHORT)
+						.show();
+			}
+
+			Intent intent = new Intent(CityActivity.this, MainActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+		} else {
+			Toast.makeText(CityActivity.this, "没有找到对应城市", Toast.LENGTH_SHORT)
+					.show();
+			searchcity.setText("");
 		}
-		return super.onOptionsItemSelected(item);
+	}
+
+	/*
+	 * private class LocationBroadcastReceiver extends BroadcastReceiver {
+	 * 
+	 * @Override public void onReceive(Context context, Intent intent) { if
+	 * (!intent.getAction().equals(Common.LOCATION_ACTION)) return; String
+	 * locationInfo = intent.getStringExtra(Common.LOCATION);
+	 * location.setText(locationInfo); dialog.dismiss();
+	 * CityActivity.this.unregisterReceiver(this);// 不需要时注销 } }
+	 */
+
+	public class MyLocationListener implements BDLocationListener {
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			if (location == null)
+				return;
+			StringBuffer sb = new StringBuffer(256);
+			sb.append("time : ");
+			sb.append(location.getTime());
+			sb.append("\nerror code : ");
+			sb.append(location.getLocType());
+			sb.append("\nlatitude : ");
+			sb.append(location.getLatitude());
+			sb.append("\nlontitude : ");
+			sb.append(location.getLongitude());
+			sb.append("\nradius : ");
+			sb.append(location.getRadius());
+			if (location.getLocType() == BDLocation.TypeGpsLocation) {
+				sb.append("\nspeed : ");
+				sb.append(location.getSpeed());
+				sb.append("\nsatellite : ");
+				sb.append(location.getSatelliteNumber());
+			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+				sb.append("\naddr : ");
+				sb.append(location.getAddrStr());
+				locaName = location.getAddrStr();
+				myLocation.setText("定位结果：" + locaName);
+
+				sb.append("\nprovince");
+				// 省
+				sb.append(location.getProvince());
+				// 市
+				sb.append("\ncity");
+				sb.append(location.getCity());
+				// 县和区
+				sb.append("\ndistrict");
+				sb.append(location.getDistrict());
+				String locaCityName = location.getCity();
+				locaCityName = locaCityName.substring(0, locaCityName.length() - 1);
+				String locaDistrictName = location.getDistrict();
+				if(locaDistrictName.length() >= 3){
+				locaDistrictName = locaDistrictName.substring(0, locaDistrictName.length() - 1);
+				}
+
+				String citycode = myDbHelper.queryOneData(locaDistrictName);
+				if (citycode != null) {
+					addCity(locaDistrictName);
+				} else {
+					addCity(locaCityName);
+				}
+
+			}
+
+			// logMsg(sb.toString());
+			Log.i("CCCC", sb.toString());
+			mLocationClient.stop();
+			
+		}
+	}
+
+	/**
+	 * 显示请求字符串
+	 * 
+	 * @param str
+	 */
+	// public void logMsg(String str) {
+	// try {
+	// if (mLocationResult != null)
+	// mLocationResult.setText(str);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	private LocationMode tempMode = LocationMode.Hight_Accuracy;
+	private String tempcoor = "gcj02";
+
+	private void InitLocation() {
+		LocationClientOption option = new LocationClientOption();
+		option.setLocationMode(tempMode);// 设置定位模式
+		option.setCoorType(tempcoor);// 返回的定位结果是百度经纬度，默认值gcj02
+		// int span=1000;
+		int span = 5000;
+		// try {
+		// span = Integer.valueOf(frequence.getText().toString());
+		// } catch (Exception e) {
+		// // TODO: handle exception
+		// }
+		option.setScanSpan(span);// 设置发起定位请求的间隔时间为5000ms
+		// option.setIsNeedAddress(checkGeoLocation.isChecked());
+		option.setIsNeedAddress(true);
+		mLocationClient.setLocOption(option);
 	}
 }

@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -25,10 +28,23 @@ public class DBUtil extends SQLiteOpenHelper {
 	private Context context;
 	public static String dbName = "weather.db";// 数据库的名字
 	private static String DATABASE_PATH;// 数据库在手机里的路径
-	
 
 	private SQLiteDatabase myDataBase;
-	SQLiteDatabase db;
+	
+	private String AREAID="areaid";
+	private String NAMEEN="nameen";
+	private String NAMECN="namecn";
+	private String DISTRICTEN="districten";
+	private String DISTRICTCN="districtcn";
+	private String PROVEN="proven";
+	private String PROVCN="provcn";
+	private String NATIONEN="nationen";
+	private String NATIONCN="nationcn";
+	
+	private String DATABASE_TABLE="areaid_v";
+	
+	
+	
 
 	public DBUtil(Context context) {
 
@@ -76,7 +92,7 @@ public class DBUtil extends SQLiteOpenHelper {
 	 * @return false or true
 	 */
 	public boolean checkDataBase() {
-		 db = null;
+		SQLiteDatabase db = null;
 		try {
 			String databaseFilename = DATABASE_PATH + dbName;
 			db = SQLiteDatabase.openDatabase(databaseFilename, null,
@@ -155,6 +171,48 @@ public class DBUtil extends SQLiteOpenHelper {
 
 		return results;
 
+	}
+
+	
+
+
+
+	public ArrayList<String> selectCity(String key) {
+
+//		if (!myDataBase.isOpen()) {
+//			myDataBase = myDataBase.openDataBase();
+//		}
+
+		ArrayList<String> stockList = new ArrayList<String>();
+
+		Cursor cur = null;
+
+		if (null != key && !"".equals(key)) {
+
+			// 查询的列字段名
+			String[] columns = { NAMEEN, NAMECN };
+		
+			// 查询条件
+			String where = NAMEEN + " like ? or " + NAMECN + " like ? ";
+			// 查询参数
+			String[] selectArgs = { key + "%", key + "%" };
+			// 执行查询
+			cur = myDataBase.query(DATABASE_TABLE, columns, where, selectArgs, null,
+					null, null);
+
+			cur.moveToFirst();
+			// 循环读取数据
+			while (!cur.isAfterLast()) {
+				String nameen = cur.getString(0);
+				String namecn = cur.getString(1);
+				stockList.add( namecn);
+				cur.moveToNext();
+			}
+			cur.close();
+			//close();
+			return stockList;
+		}
+		return null;
 	}
 
 	@Override

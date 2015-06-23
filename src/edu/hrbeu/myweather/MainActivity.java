@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -16,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,21 +29,22 @@ import android.os.Message;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -60,13 +61,17 @@ public class MainActivity extends Activity implements OnGestureListener,
 	Index myIndex = new Index();
 	TextView date;
 	TextView viewday;
-	TextView temperature;
+	TextView nowtemp;
+	TextView tempHL;
 	TextView windD;
 	TextView windP;
 	ImageView phenomena;
 
 	TextView sundown;
 	TextView sunrise;
+	
+	String areaid;
+	String nowCityN;
 
 	String url_f;
 	String url_i;
@@ -76,6 +81,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	String weatherResponse;
 	String indexResponse;
 	WDataCache wDataCache;
+	
+	String tempByBD;
 
 	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
 
@@ -148,7 +155,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// codeList.add(entry.getValue().toString());
 		// }
 
-		String areaid = sp2.getString("citycode", "101010100");
+		areaid = sp2.getString("citycode", "101010100");
+		nowCityN = sp2.getString("searchcity", "北京");
 
 		url_f = EncodeUtil.getUrl(areaid, "forecast_v");// 天气
 		url_i = EncodeUtil.getUrl(areaid, "index_v");// 指数
@@ -163,6 +171,9 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		// 绑定inflate控件，否则无法使用它
 		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
+		
+		nowtemp = (TextView) view_today.findViewById(R.id.nowtemp);
+		
 
 		/* pageControl = (PageControlView) findViewById(R.id.); */
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
@@ -179,15 +190,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		cityArray = new ArrayList<String>();
 		codeList = new ArrayList<String>();
-		Cursor cCursor = wDataCache.getAllmyWeatherDB();
+		
 
+		Cursor cCursor = wDataCache.getAllmyWeatherDB();
 		while (cCursor.moveToNext()) {
 			cityArray.add(cCursor.getString(cCursor.getColumnIndex("city")));
 			codeList.add(cCursor.getString(cCursor.getColumnIndex("citycode")));
 		}
 
 		startManagingCursor(cCursor);
-
+//创建数组型适配器
 		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this,
 				R.layout.list_style, cityArray);
 		// ListAdapter cityAdapter = new SimpleCursorAdapter(this,
@@ -195,7 +207,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// cCursor,
 		// new String[]{myDbHelper.MyCity},
 		// new int[]{R.id.citylist});
-
+//显示到列表
 		cityLV.setAdapter(cityAdapter);
 		cityLV.setOnItemClickListener(new OnItemClickListener() {
 
@@ -221,7 +233,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 				if (slideMenu.isMenuShow())
 					slideMenu.hideMenu();
 
-				noNetView(cityArray.get(position));
+				noNetView(codeList.get(position));
 
 			}
 		});
@@ -278,20 +290,19 @@ public class MainActivity extends Activity implements OnGestureListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		String nowCityV = sp2.getString("searchcity", "北京");
-		String nowCityCode = sp2.getString("citycode", "101010100");
-		getWeatherDate(url_f, 1, nowCityV, nowCityCode);
-		getWeatherDate(url_i, 2, nowCityV, nowCityCode);
+		
+		getWeatherDate(url_f, 1, nowCityN, areaid);
+		getWeatherDate(url_i, 2, nowCityN, areaid);
 
-		noNetView(nowCityV);
+		noNetView(areaid);
 
 		System.out.println("onResume");
 	}
 
-	public void noNetView(String city) {
+	public void noNetView(String citycode) {
 		boolean result = CheckNetWork();
 		if (!result) {
-			Cursor wCursor = wDataCache.getmyWeatherDB(city);
+			Cursor wCursor = wDataCache.getmyWeatherDB(citycode);
 			String weatherColumn = wCursor.getString(wCursor
 					.getColumnIndex("weather"));
 			String indexColumn = wCursor.getString(wCursor
@@ -311,14 +322,22 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 	}
 
+	
+	
 	public void getWeatherDate(final String url, final int num,
 			final String city, final String citycode) {
 		Thread newThread; // 声明一个子线程
-
+		Log.i("BBBB", "citycode:"+citycode);
 		newThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// 这里写入子线程需要做的工作
+				
+				Log.i("CCCC", "citycode:"+citycode);
+				
+			String jsonResultByBD = getWeatherByBD(citycode);
+			tempByBD=getTempWeatherByBD(jsonResultByBD);
+				
 				try {
 					// 创建一个默认的HttpClient
 					HttpClient httpclient = new DefaultHttpClient();
@@ -336,7 +355,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 						myIndex = getIndex(response);
 					}
 
-					Cursor wCursor = wDataCache.getmyWeatherDB(city);
+					Cursor wCursor = wDataCache.getmyWeatherDB(citycode);
 					if (wCursor == null || wCursor.getCount() <= 0) {
 						wDataCache.insertmyWeatherDB(city, citycode,
 								weatherResponse, indexResponse);
@@ -364,7 +383,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		sundown = (TextView) view.findViewById(R.id.sundown);
 		/* date = (TextView) view.findViewById(R.id.date); */
 
-		temperature = (TextView) view.findViewById(R.id.temperature);
+		tempHL = (TextView) view.findViewById(R.id.tempHL);
 		windD = (TextView) view.findViewById(R.id.windD);
 		windP = (TextView) view.findViewById(R.id.windP);
 		phenomena = (ImageView) view.findViewById(R.id.phenomena);
@@ -380,8 +399,10 @@ public class MainActivity extends Activity implements OnGestureListener,
 			// TODO Auto-generated method stub
 			if (msg.what == 1) {
 				citytitle.setText(myWeather.city);
+				nowtemp.setText(tempByBD+"°");
 
 				changeview(view_today);
+				
 				RefreshWeather(0);
 				changeview(view_tomorrow);
 				RefreshWeather(1);
@@ -426,7 +447,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// 白天晚上的参数不同，通过日出日落时间进行判读输出
 		if (hh >= 18 || hh < 8)
 			dayflag = false;
-
+		SharedPreferences sp;
+		sp = getSharedPreferences("temperatureD", MODE_PRIVATE);
 		if (dayflag) {
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPD[i])]);
@@ -436,8 +458,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherD[i])]);
-			temperature.setText(myWeather.temperatureD[i] + "°" + "/"
+			tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
 					+ myWeather.temperatureN[i] + "°");
+			
+			
+			Editor ed = sp.edit();
+			ed.putString("temperatureD", myWeather.temperatureD[0]);
+			ed.commit();
+			
+			
+			
 		} else {
 			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
@@ -448,8 +478,12 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			weather_condition.setText(WeatherCondition[Integer
 					.parseInt(myWeather.weatherN[i])]);
-			temperature.setText(myWeather.temperatureD[i] + "°" + "/"
-					+ myWeather.temperatureN[i] + "°");
+			if(i == 0){
+				String temperatureD = sp.getString("temperatureD", myWeather.temperatureD[0]);
+			tempHL.setText(temperatureD + "°" + "/"
+					+ myWeather.temperatureN[i] + "°");}
+			else{tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
+					+ myWeather.temperatureN[i] + "°");}
 		}
 	}
 
@@ -501,6 +535,37 @@ public class MainActivity extends Activity implements OnGestureListener,
 		return null;
 	}
 
+	public String getWeatherByBD(String cityid){
+		
+		String httpUrl = "http://apis.baidu.com/apistore/weatherservice/cityid";
+		String httpArg = "cityid="+cityid;
+		String jsonResult = EncodeUtilByBD.request(httpUrl, httpArg);
+
+		System.out.println("baidu:"+jsonResult);
+		return jsonResult;
+	}
+	
+		
+	public String getTempWeatherByBD(String strResult) {
+
+		try {
+			String tempString;
+			// /解析
+			JSONObject jsonObject;
+			// String a = new String(strResult, "UTF-8");
+			jsonObject = new JSONObject(strResult);
+
+			JSONObject retData = jsonObject.getJSONObject("retData");
+			tempString = retData.getString("temp");
+
+			return tempString;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * 获取天气指数信息
 	 * 
@@ -554,6 +619,35 @@ public class MainActivity extends Activity implements OnGestureListener,
 				+ myIndex.i_5[1]);
 		i3.setText(myIndex.i_c[2] + ":" + myIndex.i_l[2] + "\n"
 				+ myIndex.i_5[2]);
+		
+		
+		
+		
+		/////////////////////////////////////////////////////////
+		 LayoutInflater layoutInflater = (LayoutInflater) (MainActivity.this)
+                 .getSystemService(LAYOUT_INFLATER_SERVICE);
+         // 获取自定义布局文件poplayout.xml的视图
+         View popview = layoutInflater.inflate(R.layout.view_today, null);
+         PopupWindow popWindow = new PopupWindow(popview,
+        		 300,300,true);
+         //规定弹窗的位置
+         popWindow.showAtLocation(findViewById(R.id.view_today), Gravity.BOTTOM,
+                 0, 0);
+         //PopupWindow里的两个Button
+         i1 = (TextView) popview.findViewById(R.id.i1);
+         i2 = (TextView) popview.findViewById(R.id.i2);
+         i3 = (TextView) popview.findViewById(R.id.i3);
+		i1.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				new AlertDialog.Builder(MainActivity.this)    
+				                .setMessage(myIndex.i_5[0])  
+				                .show();  
+				return false;
+			}
+		});
 	}
 
 	/**

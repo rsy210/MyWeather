@@ -101,11 +101,11 @@ public class WDataCache {
 		return db.query(DATABASE_TABLE, new String[]{ID,City,CityCode,Weather,WIndex}, null, null, null, null, null);
 	}
 	//retreves a particular contact
-	public Cursor getmyWeatherDB(String city) throws SQLException
+	public Cursor getmyWeatherDB(String citycode) throws SQLException
 	{
 		Cursor wCursor = 
 				db.query(true, DATABASE_TABLE, new String[]{ ID,
-						 City,CityCode, Weather, WIndex}, City + "='" + city+"'", null, null, null, null, null);
+						 City,CityCode, Weather, WIndex}, CityCode + "='" + citycode+"'", null, null, null, null, null);
 		if (wCursor != null)
 			wCursor.moveToFirst();
 		
