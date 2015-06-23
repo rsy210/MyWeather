@@ -91,6 +91,11 @@
                 android:longClickable="true"
                 android:text="指数"
                 android:textSize="14sp" />
+                <TextView
+                android:id="@+id/i1pop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout

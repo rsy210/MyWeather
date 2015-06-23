@@ -83,6 +83,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	WDataCache wDataCache;
 	
 	String tempByBD;
+	
+	PopupWindow popWindow;
 
 	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
 
@@ -624,31 +626,65 @@ public class MainActivity extends Activity implements OnGestureListener,
 		
 		
 		/////////////////////////////////////////////////////////
-		 LayoutInflater layoutInflater = (LayoutInflater) (MainActivity.this)
-                 .getSystemService(LAYOUT_INFLATER_SERVICE);
-         // 获取自定义布局文件poplayout.xml的视图
-         View popview = layoutInflater.inflate(R.layout.view_today, null);
-         PopupWindow popWindow = new PopupWindow(popview,
-        		 300,300,true);
-         //规定弹窗的位置
-         popWindow.showAtLocation(findViewById(R.id.view_today), Gravity.BOTTOM,
-                 0, 0);
-         //PopupWindow里的两个Button
-         i1 = (TextView) popview.findViewById(R.id.i1);
-         i2 = (TextView) popview.findViewById(R.id.i2);
-         i3 = (TextView) popview.findViewById(R.id.i3);
+		
 		i1.setOnLongClickListener(new OnLongClickListener() {
 			
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				new AlertDialog.Builder(MainActivity.this)    
-				                .setMessage(myIndex.i_5[0])  
-				                .show();  
+//				new AlertDialog.Builder(MainActivity.this)    
+//				                .setMessage(myIndex.i_5[0])  
+//				                .show();  
+				getPopupWindowInstance(myIndex.i_5[0]);
+				popWindow.showAsDropDown(v);
 				return false;
 			}
 		});
 	}
+	/* 
+     * 获取PopupWindow实例 
+     */  
+	 private void getPopupWindowInstance(String text) {  
+	        if (null != popWindow) {  
+	        	popWindow.dismiss();  
+	            return;  
+	        } else {  
+	        	PopuptWindow(text);  
+	        }  
+	    }  
+	/* 
+     * 创建PopupWindow 
+     */  
+    private void PopuptWindow(String text) {  
+    	 LayoutInflater layoutInflater = LayoutInflater.from(this); 
+    	 /*LayoutInflater layoutInflater = (LayoutInflater) (MainActivity.this)
+                 .getSystemService(LAYOUT_INFLATER_SERVICE);*/
+         // 获取自定义布局文件poplayout.xml的视图
+         View popview = layoutInflater.inflate(R.layout.i_popview, null);
+        popWindow = new PopupWindow(popview,
+        		 300,300,true);
+         //规定弹窗的位置
+//         popWindow.showAtLocation(findViewById(R.id.i), Gravity.BOTTOM,
+//                 0, 0);
+         //PopupWindow里的
+         TextView i1pop = (TextView) popview.findViewById(R.id.i1pop);
+         i1pop.setText(text);
+       /*  i2 = (TextView) popview.findViewById(R.id.i2);
+         i3 = (TextView) popview.findViewById(R.id.i3);*/
+        
+  
+        // 创建一个PopupWindow  
+        // 参数1：contentView 指定PopupWindow的内容  
+        // 参数2：width 指定PopupWindow的width  
+        // 参数3：height 指定PopupWindow的height  
+//        mPopupWindow = new PopupWindow(popupWindow, 100, 130);  
+  
+/*        // 获取屏幕和PopupWindow的width和height  
+        mScreenWidth = getWindowManager().getDefaultDisplay().getWidth();  
+        mScreenWidth = getWindowManager().getDefaultDisplay().getHeight();  
+        mPopupWindowWidth = mPopupWindow.getWidth();  
+        mPopupWindowHeight = mPopupWindow.getHeight(); */ 
+    }  
 
 	/**
 	 * 将中文乱码转换为正常编码
