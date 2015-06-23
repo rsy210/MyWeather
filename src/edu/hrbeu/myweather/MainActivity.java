@@ -636,7 +636,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 //				                .setMessage(myIndex.i_5[0])  
 //				                .show();  
 				getPopupWindowInstance(myIndex.i_5[0]);
-				popWindow.showAsDropDown(v);
+//				popWindow.showAsDropDown(v);
 				return false;
 			}
 		});
@@ -663,9 +663,21 @@ public class MainActivity extends Activity implements OnGestureListener,
          View popview = layoutInflater.inflate(R.layout.i_popview, null);
         popWindow = new PopupWindow(popview,
         		 300,300,true);
+        popWindow.setOutsideTouchable(true);
+        popWindow.setTouchable(true);
+        popWindow.setTouchInterceptor(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				if(event.getAction()==MotionEvent.ACTION_OUTSIDE)
+					popWindow.dismiss();
+				return false;
+			}
+		});
          //规定弹窗的位置
-//         popWindow.showAtLocation(findViewById(R.id.i), Gravity.BOTTOM,
-//                 0, 0);
+         popWindow.showAtLocation(findViewById(R.id.view_today), Gravity.BOTTOM,
+                0, 0);
          //PopupWindow里的
          TextView i1pop = (TextView) popview.findViewById(R.id.i1pop);
          i1pop.setText(text);
