@@ -56,7 +56,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 	/* private PageControlView pageControl; */
 	private SlideMenu slideMenu;
 
-	
 	EncodeUtil jd;
 	Weather myWeather = new Weather();
 	Index myIndex = new Index();
