@@ -14,6 +14,11 @@
         android:text="分类"
         android:textColor="#ff959595"
         android:textSize="14.0sp" />
+    <Button
+        android:id="@+id/buttonshare"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="button"/>
 
     <Button
         android:id="@+id/citybutton"

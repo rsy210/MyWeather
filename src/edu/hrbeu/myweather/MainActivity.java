@@ -86,6 +86,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 	String tempByBD;
 
+	Button buttonshare;
+
 	PopupWindow popWindow;
 
 	int page = 0;// onfling 用于记录滑动页数，用于取消循环滑动
@@ -264,7 +266,13 @@ public class MainActivity extends Activity implements OnGestureListener,
 				startActivity(intent);
 			}
 		});
+		// ///////////////////////////////////////////////////////////////////
+		// 设置分享功能
+		buttonshare = (Button) findViewById(R.id.buttonshare);
+		
 
+		// //////////////////////
+		// 刷新第一天
 		days(0);
 	}
 
@@ -453,11 +461,20 @@ public class MainActivity extends Activity implements OnGestureListener,
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPD[i])]);
 
-			phenomena.setBackgroundDrawable(getResources().getDrawable(
-					DWeatherArray[Integer.parseInt(myWeather.weatherD[i])]));
+			if (Integer.parseInt(myWeather.weatherD[i]) >= 53) {
+				phenomena.setBackgroundDrawable(getResources().getDrawable(
+						DWeatherArray[32]));
+				weather_condition.setText(WeatherCondition[Integer
+						.parseInt(myWeather.weatherD[i]) - 21]);
+			} else {
+				phenomena
+						.setBackgroundDrawable(getResources().getDrawable(
+								DWeatherArray[Integer
+										.parseInt(myWeather.weatherD[i])]));
+				weather_condition.setText(WeatherCondition[Integer
+						.parseInt(myWeather.weatherD[i])]);
+			}
 
-			weather_condition.setText(WeatherCondition[Integer
-					.parseInt(myWeather.weatherD[i])]);
 			tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
 					+ myWeather.temperatureN[i] + "°");
 
@@ -470,11 +487,21 @@ public class MainActivity extends Activity implements OnGestureListener,
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPN[i])]);
 
-			phenomena.setBackgroundDrawable(getResources().getDrawable(
-					DWeatherArray[Integer.parseInt(myWeather.weatherN[i])]));
+			if (Integer.parseInt(myWeather.weatherN[i]) >= 53) {
+				phenomena.setBackgroundDrawable(getResources().getDrawable(
+						NWeatherArray[32]));
+				weather_condition.setText(WeatherCondition[Integer
+						.parseInt(myWeather.weatherN[i]) - 21]);
+			} else {
+				phenomena
+						.setBackgroundDrawable(getResources().getDrawable(
+								NWeatherArray[Integer
+										.parseInt(myWeather.weatherN[i])]));
 
-			weather_condition.setText(WeatherCondition[Integer
-					.parseInt(myWeather.weatherN[i])]);
+				weather_condition.setText(WeatherCondition[Integer
+						.parseInt(myWeather.weatherN[i])]);
+			}
+
 			if (i == 0) {
 				String temperatureD = sp.getString("temperatureD",
 						myWeather.temperatureD[0]);
@@ -611,12 +638,9 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// + myIndex.i_c2[1] + "," + myIndex.i_l[1] + "," + myIndex.i_5[1]);
 		// i3.setText(myIndex.i_s[2] + "," + myIndex.i_c[2] + ","
 		// + myIndex.i_c2[2] + "," + myIndex.i_l[2] + "," + myIndex.i_5[2]);
-		i1.setText(myIndex.i_c[0] + ":" + myIndex.i_l[0] + "\n"
-				+ myIndex.i_5[0]);
-		i2.setText(myIndex.i_c[1] + ":" + myIndex.i_l[1] + "\n"
-				+ myIndex.i_5[1]);
-		i3.setText(myIndex.i_c[2] + ":" + myIndex.i_l[2] + "\n"
-				+ myIndex.i_5[2]);
+		i1.setText(myIndex.i_c[0] + ":" + "\n" + myIndex.i_l[0]);
+		i2.setText(myIndex.i_c[1] + ":" + "\n" + myIndex.i_l[1]);
+		i3.setText(myIndex.i_c[2] + ":" + "\n" + myIndex.i_l[2]);
 
 		// ///////////////////////////////////////////////////////
 
@@ -633,18 +657,51 @@ public class MainActivity extends Activity implements OnGestureListener,
 				return false;
 			}
 		});
+		i2.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				getPopupWindowInstance(myIndex.i_5[1], v);
+				return false;
+			}
+		});
+		i3.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				getPopupWindowInstance(myIndex.i_5[2], v);
+				return false;
+			}
+		});
 	}
 
+	//////////////////////////////////////////////////////
+	public void shareWeather(final String shareMessage){
+		buttonshare.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				// intent.setType("image/*");
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
+				intent.putExtra(Intent.EXTRA_TEXT,
+						shareMessage);
+				// intent.putExtra(Intent.EXTRA_TEXT, text);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(Intent.createChooser(intent, getTitle()));
+			}
+		});
+	}
+	
+	
+	
 	/*
 	 * 获取PopupWindow实例
 	 */
 	private void getPopupWindowInstance(String text, View v) {
-		// if (null != popWindow) {
-		// popWindow.dismiss();
-		// return;
-		// } else {
 		PopuptWindow(text, v);
-		// }
 	}
 
 	/*
@@ -658,17 +715,15 @@ public class MainActivity extends Activity implements OnGestureListener,
 		 */
 		// 获取自定义布局文件poplayout.xml的视图
 		View popview = layoutInflater.inflate(R.layout.i_popview, null);
-		popWindow = new PopupWindow(popview,
-				v.getWidth(),
-				WindowManager.LayoutParams.WRAP_CONTENT, true);
+		popWindow = new PopupWindow(popview, v.getWidth(), v.getWidth(), true);
 		popWindow.setOutsideTouchable(true);
 		popWindow.setBackgroundDrawable(new BitmapDrawable());
 		// 规定弹窗的位置
-		
+
 		int[] location = new int[2];
 		v.getLocationOnScreen(location);
 		popWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0],
-				location[1] + (popWindow.getHeight())/2);
+				location[1] - popWindow.getHeight());
 		// PopupWindow里的
 		TextView i1pop = (TextView) popview.findViewById(R.id.i1pop);
 		i1pop.setText(text);
@@ -729,25 +784,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
 		String dateOk = simpleDateFormat.format(newDate2);
 		return dateOk;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
