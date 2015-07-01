@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,22 +31,23 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class MainActivity extends Activity implements OnGestureListener,
@@ -64,7 +64,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 	TextView date;
 	TextView viewday;
 	TextView nowtemp;
-	TextView tempHL;
+	TextView tempH;
+	TextView tempL;
 	TextView windD;
 	TextView windP;
 	ImageView phenomena;
@@ -87,6 +88,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	String tempByBD;
 
 	Button buttonshare;
+	String shareContent;
 
 	PopupWindow popWindow;
 
@@ -100,7 +102,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 			" 雨夹雪", " 小雨", " 中雨", " 大雨", " 暴雨", " 大暴雨", " 特大暴雨", " 阵雪", " 小雪",
 			" 中雪", " 大雪", " 暴雪", " 雾", " 冻雨", " 沙尘暴", " 小到中雨", " 中到大雨",
 			" 大到暴雨", " 暴雨到大暴雨", " 大暴雨到特大暴雨", " 小到中雪", " 中到大雪", " 大到暴雪", " 浮尘",
-			" 扬沙", " 强沙尘暴", " 霾", " 无" };
+			" 扬沙", " 强沙尘暴", " 霾" };
 	String[] windDirect = { "无持续风向", "东北风", "东风", "东南风", "南风", "西南风", "西风",
 			"西北风", "北风", "旋转风" };
 	String[] windPower = { "微风", "3-4级", "4-5级", "5-6级", "6-7级", "7-8级",
@@ -137,6 +139,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	private ArrayList<String> codeList;
 	private TextView citytitle;
 	private TextView daytitle;
+	private ArrayAdapter<String> cityAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,9 +164,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// codeList.add(entry.getValue().toString());
 		// }
 
-		areaid = sp2.getString("citycode", "101010100");
-		nowCityN = sp2.getString("searchcity", "北京");
+		areaid = sp2.getString("citycode", null);
+		nowCityN = sp2.getString("searchcity", null);
 
+		if (areaid == null) {
+			Intent intent = new Intent(MainActivity.this, CityActivity.class);
+			startActivity(intent);
+
+			Toast.makeText(MainActivity.this, "请添加一个城市", Toast.LENGTH_SHORT)
+					.show();
+		}
 		url_f = EncodeUtil.getUrl(areaid, "forecast_v");// 天气
 		url_i = EncodeUtil.getUrl(areaid, "index_v");// 指数
 		// //////////////////////////////////////////////////////////////
@@ -178,7 +188,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// 绑定inflate控件，否则无法使用它
 		myViewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 
-		nowtemp = (TextView) view_today.findViewById(R.id.nowtemp);
+		// nowtemp = (TextView) view_today.findViewById(R.id.nowtemp);
 
 		/* pageControl = (PageControlView) findViewById(R.id.); */
 		slideMenu = (SlideMenu) findViewById(R.id.slide_menu);
@@ -204,8 +214,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		startManagingCursor(cCursor);
 		// 创建数组型适配器
-		ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(this,
-				R.layout.list_style, cityArray);
+		cityAdapter = new ArrayAdapter<String>(this, R.layout.list_style,
+				cityArray);
 		// ListAdapter cityAdapter = new SimpleCursorAdapter(this,
 		// android.R.layout.simple_expandable_list_item_1,
 		// cCursor,
@@ -219,6 +229,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
+				// view.setBackgroundDrawable(getResources().getDrawable(R.drawable.d02));
 
 				Editor ed2 = sp2.edit();
 				ed2.putString("citycode", codeList.get(position));
@@ -239,6 +250,56 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 				noNetView(codeList.get(position));
 
+			}
+		});
+		cityLV.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+
+				wDataCache.deletemyWeatherDB(codeList.get(position));
+				String str = cityArray.get(position);
+				// 删掉长按的item
+				cityArray.remove(position);
+				codeList.remove(position);
+
+				if (cityArray.isEmpty()) {
+
+					Editor ed2 = sp2.edit();
+					ed2.clear();
+					ed2.commit();
+
+					Intent intent = new Intent(MainActivity.this,
+							CityActivity.class);
+					startActivity(intent);
+
+					Toast.makeText(MainActivity.this, "请添加一个城市",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					nowCityN = cityArray.get(0);
+					areaid = codeList.get(0);
+
+					// 生成新的获取城市天气地址
+					url_f = EncodeUtil.getUrl(areaid, "forecast_v");// 天气
+					getWeatherDate(url_f, 1, nowCityN, areaid);
+					getWeatherDate(url_i, 2, nowCityN, areaid);
+
+					citytitle.setText(nowCityN);
+
+					Editor ed2 = sp2.edit();
+					ed2.putString("citycode", areaid);
+					ed2.putString("searchcity", nowCityN);
+					ed2.commit();
+					// nowtemp.setText(tempByBD + "°");
+
+					// 动态更新listview
+					cityAdapter.notifyDataSetChanged();
+
+				}
+
+				return false;
 			}
 		});
 
@@ -269,7 +330,6 @@ public class MainActivity extends Activity implements OnGestureListener,
 		// ///////////////////////////////////////////////////////////////////
 		// 设置分享功能
 		buttonshare = (Button) findViewById(R.id.buttonshare);
-		
 
 		// //////////////////////
 		// 刷新第一天
@@ -306,7 +366,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		noNetView(areaid);
 
-		System.out.println("onResume");
+		Log.i("cccc", "onResume");
 	}
 
 	public void noNetView(String citycode) {
@@ -320,6 +380,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 			myWeather = getWeather(weatherColumn);
 			myIndex = getIndex(indexColumn);
 
+			// nowtemp.setText(tempByBD + "°");
 			citytitle.setText(myWeather.city);
 
 			changeview(view_today);
@@ -391,7 +452,8 @@ public class MainActivity extends Activity implements OnGestureListener,
 		sundown = (TextView) view.findViewById(R.id.sundown);
 		/* date = (TextView) view.findViewById(R.id.date); */
 
-		tempHL = (TextView) view.findViewById(R.id.tempHL);
+		tempH = (TextView) view.findViewById(R.id.tempH);
+		tempL = (TextView) view.findViewById(R.id.tempL);
 		windD = (TextView) view.findViewById(R.id.windD);
 		windP = (TextView) view.findViewById(R.id.windP);
 		phenomena = (ImageView) view.findViewById(R.id.phenomena);
@@ -407,10 +469,9 @@ public class MainActivity extends Activity implements OnGestureListener,
 			// TODO Auto-generated method stub
 			if (msg.what == 1) {
 				citytitle.setText(myWeather.city);
-				nowtemp.setText(tempByBD + "°");
+				// nowtemp.setText(tempByBD + "°");
 
 				changeview(view_today);
-
 				RefreshWeather(0);
 				changeview(view_tomorrow);
 				RefreshWeather(1);
@@ -461,56 +522,73 @@ public class MainActivity extends Activity implements OnGestureListener,
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDD[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPD[i])]);
 
-			if (Integer.parseInt(myWeather.weatherD[i]) >= 53) {
-				phenomena.setBackgroundDrawable(getResources().getDrawable(
-						DWeatherArray[32]));
-				weather_condition.setText(WeatherCondition[Integer
-						.parseInt(myWeather.weatherD[i]) - 21]);
-			} else {
-				phenomena
-						.setBackgroundDrawable(getResources().getDrawable(
-								DWeatherArray[Integer
-										.parseInt(myWeather.weatherD[i])]));
-				weather_condition.setText(WeatherCondition[Integer
-						.parseInt(myWeather.weatherD[i])]);
+			phenomena.setBackgroundDrawable(getResources().getDrawable(
+					DWeatherArray[Integer.parseInt(myWeather.weatherD[i])]));
+			weather_condition.setText(WeatherCondition[Integer
+					.parseInt(myWeather.weatherD[i])]);
+			tempH.setText(myWeather.temperatureD[i] + "°");
+			tempL.setText(myWeather.temperatureN[i] + "°");
+			if (myWeather.temperatureD[0] != null) {
+				Editor ed = sp.edit();
+				ed.putString("temperatureD", myWeather.temperatureD[0]);
+				ed.commit();
 			}
+			shareContent = myWeather.city + "今天的温度为"
+					+ myWeather.temperatureD[0] + "°" + "到"
+					+ myWeather.temperatureN[0] + "°" + ","
+					+ WeatherCondition[Integer.parseInt(myWeather.weatherD[0])]
+					+ "\n" + windDirect[Integer.parseInt(myWeather.windDD[0])]
+					+ " " + windPower[Integer.parseInt(myWeather.windPD[0])]
+					+ "\n" + myIndex.i_5[2];
 
-			tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
-					+ myWeather.temperatureN[i] + "°");
-
-			Editor ed = sp.edit();
-			ed.putString("temperatureD", myWeather.temperatureD[0]);
-			ed.commit();
+			buttonshare.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					shareWeather(shareContent);
+				}
+			});
 
 		} else {
 			Log.v("TP", "TP4");
 			windD.setText(windDirect[Integer.parseInt(myWeather.windDN[i])]);
 			windP.setText(windPower[Integer.parseInt(myWeather.windPN[i])]);
+			phenomena.setBackgroundDrawable(getResources().getDrawable(
+					NWeatherArray[Integer.parseInt(myWeather.weatherN[i])]));
 
-			if (Integer.parseInt(myWeather.weatherN[i]) >= 53) {
-				phenomena.setBackgroundDrawable(getResources().getDrawable(
-						NWeatherArray[32]));
-				weather_condition.setText(WeatherCondition[Integer
-						.parseInt(myWeather.weatherN[i]) - 21]);
-			} else {
-				phenomena
-						.setBackgroundDrawable(getResources().getDrawable(
-								NWeatherArray[Integer
-										.parseInt(myWeather.weatherN[i])]));
-
-				weather_condition.setText(WeatherCondition[Integer
-						.parseInt(myWeather.weatherN[i])]);
-			}
+			weather_condition.setText(WeatherCondition[Integer
+					.parseInt(myWeather.weatherN[i])]);
 
 			if (i == 0) {
 				String temperatureD = sp.getString("temperatureD",
 						myWeather.temperatureD[0]);
-				tempHL.setText(temperatureD + "°" + "/"
-						+ myWeather.temperatureN[i] + "°");
+				tempH.setText(temperatureD + "°");
+				tempL.setText(myWeather.temperatureN[i] + "°");
+				shareContent = myWeather.city+"今天的温度为"
+						+ temperatureD
+						+ "°"
+						+ "到"
+						+ myWeather.temperatureN[0]
+						+ "°"
+						+ ","
+						+ WeatherCondition[Integer
+								.parseInt(myWeather.weatherN[0])] + "\n"
+						+ windDirect[Integer.parseInt(myWeather.windDN[0])]
+						+ " "
+						+ windPower[Integer.parseInt(myWeather.windPN[0])]
+						+ "\n" + myIndex.i_5[2];
 			} else {
-				tempHL.setText(myWeather.temperatureD[i] + "°" + "/"
-						+ myWeather.temperatureN[i] + "°");
+				tempH.setText(myWeather.temperatureD[i] + "°");
+				tempL.setText(myWeather.temperatureN[i] + "°");
 			}
+
+			buttonshare.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					shareWeather(shareContent);
+
+				}
+			});
 		}
 	}
 
@@ -545,7 +623,16 @@ public class MainActivity extends Activity implements OnGestureListener,
 				JSONObject jsob = (JSONObject) f1.get(i);
 
 				weather.weatherD[i] = jsob.getString("fa");
+
+				if (!weather.weatherD[i].equals("")) {
+					if (Integer.parseInt(weather.weatherD[i]) >= 53)
+						weather.weatherD[i] = "32";
+				}
+
 				weather.weatherN[i] = jsob.getString("fb");
+				if (Integer.parseInt(weather.weatherN[i]) >= 53)
+					weather.weatherN[i] = "32";
+
 				weather.temperatureD[i] = jsob.getString("fc");
 				weather.temperatureN[i] = jsob.getString("fd");
 				weather.windDD[i] = jsob.getString("fe");
@@ -576,6 +663,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 		try {
 			String tempString;
+			// String tmpH;
 			// /解析
 			JSONObject jsonObject;
 			// String a = new String(strResult, "UTF-8");
@@ -583,7 +671,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 
 			JSONObject retData = jsonObject.getJSONObject("retData");
 			tempString = retData.getString("temp");
-
+			// tmpH = retData.getString("temp");
 			return tempString;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -641,6 +729,17 @@ public class MainActivity extends Activity implements OnGestureListener,
 		i1.setText(myIndex.i_c[0] + ":" + "\n" + myIndex.i_l[0]);
 		i2.setText(myIndex.i_c[1] + ":" + "\n" + myIndex.i_l[1]);
 		i3.setText(myIndex.i_c[2] + ":" + "\n" + myIndex.i_l[2]);
+		
+		i3.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this,SharewearActivity.class);
+				startActivity(intent);
+				
+			}
+		});
 
 		// ///////////////////////////////////////////////////////
 
@@ -675,28 +774,20 @@ public class MainActivity extends Activity implements OnGestureListener,
 		});
 	}
 
-	//////////////////////////////////////////////////////
-	public void shareWeather(final String shareMessage){
-		buttonshare.setOnClickListener(new OnClickListener() {
+	// ////////////////////////////////////////////////////
+	public void shareWeather(final String shareMessage) {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				// intent.setType("image/*");
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
-				intent.putExtra(Intent.EXTRA_TEXT,
-						shareMessage);
-				// intent.putExtra(Intent.EXTRA_TEXT, text);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(Intent.createChooser(intent, getTitle()));
-			}
-		});
+		// TODO Auto-generated method stub
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		// intent.setType("image/*");
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
+		intent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+		// intent.putExtra(Intent.EXTRA_TEXT, text);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(Intent.createChooser(intent, getTitle()));
 	}
-	
-	
-	
+
 	/*
 	 * 获取PopupWindow实例
 	 */
@@ -808,6 +899,7 @@ public class MainActivity extends Activity implements OnGestureListener,
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
 		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -828,12 +920,30 @@ public class MainActivity extends Activity implements OnGestureListener,
 			slideMenu.hideMenu();
 		} else {
 			if ((e1.getX() > e2.getX()) && (page < 2)) {
+
+			    Animation lInAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in);       // 向左滑动左侧进入的渐变效果（alpha 0.1  -> 1.0）  
+	            Animation lOutAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out);     // 向左滑动右侧滑出的渐变效果（alpha 1.0  -> 0.1）  
+	  
+	            myViewFlipper.setInAnimation(lInAnim);  
+	            myViewFlipper.setOutAnimation(lOutAnim); 
+
 				myViewFlipper.showNext();
 				page += 1;
 				days(page);
+
 			}
 			// 按下时的横坐标小于放开时的横坐标，从左向右滑动
 			else if ((e1.getX() < e2.getX()) && (page > 0)) {
+				
+				Animation rInAnim = AnimationUtils.loadAnimation(MainActivity.this,
+						R.anim.push_right_in); // 向右滑动左侧进入的渐变效果（alpha 0.1 ->
+												// 1.0）
+				Animation rOutAnim = AnimationUtils.loadAnimation(MainActivity.this,
+						R.anim.push_right_out); // 向右滑动右侧滑出的渐变效果（alpha 1.0 ->
+												// 0.1）
+				myViewFlipper.setInAnimation(rInAnim);  
+				myViewFlipper.setOutAnimation(rOutAnim); 
+				
 				myViewFlipper.showPrevious();
 				page -= 1;
 				days(page);
@@ -877,4 +987,5 @@ public class MainActivity extends Activity implements OnGestureListener,
 		}
 
 	}
+
 }

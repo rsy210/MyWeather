@@ -29,7 +29,6 @@
             android:paddingTop="8dip"
             android:singleLine="true" />
 
-
         <ListView
             android:id="@+id/searchlist"
             android:layout_width="fill_parent"
@@ -46,9 +45,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/shape"
             android:gravity="center"
             android:text="定位"
-            android:textSize="25px" />
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -62,345 +62,431 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="————————部分城市————————"
-            android:textSize="17px" />
+            android:textSize="17dp" />
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/hotcity11"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="哈尔滨" />
+                android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/hotcity12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
+                <TextView
+                    android:id="@+id/hotcity11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="北京"
+                    android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/hotcity13"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/hotcity12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="上海"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="广州"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="深圳"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="天津"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="南京"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="杭州"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity32"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="成都"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="武汉"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity41"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="重庆"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity42"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="沈阳"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity43"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="西安"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity51"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="大连"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity52"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="青岛"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity53"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="苏州"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity61"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="三亚"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity62"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="无锡"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity63"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="郑州"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity71"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="厦门"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity72"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="长春"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity73"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="济南"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity81"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="石家庄"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity82"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="秦皇岛"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity83"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="哈尔滨"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/hotcity91"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="昆明"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity92"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="福州"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/hotcity93"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="长沙"
+                    android:textSize="15sp" />
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity23"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity31"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity32"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity33"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity41"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity42"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity43"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity51"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity52"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity53"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity61"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity62"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity63"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity71"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity72"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity73"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity81"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity82"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity83"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/hotcity91"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity92"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/hotcity93"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="TextView" />
-        </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

@@ -5,7 +5,8 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
-    android:textAlignment="viewStart"
+    android:textAlignment="viewStart" 
     android:drawableLeft="@drawable/ic_category_mark1"
     android:textAppearance="?android:attr/textAppearanceListItem"
-    android:textColor="#ffffff" />
+    android:textColor="#000000" />
+ 

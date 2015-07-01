@@ -2,6 +2,10 @@ package edu.hrbeu.myweather;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +17,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -48,7 +53,7 @@ public class CityActivity extends Activity {
 	public BDLocationListener myListener = new MyLocationListener();
 	String locaName;
 
-	TextView hotcity11;
+	// TextView hotcity11;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,7 @@ public class CityActivity extends Activity {
 		setContentView(R.layout.activity_city);
 		// 隐藏软键盘
 		getWindow().setSoftInputMode(
-		WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 		/* sp = getSharedPreferences("mycity", MODE_PRIVATE); */
 		sp2 = getSharedPreferences("nowcity", MODE_PRIVATE);
@@ -102,7 +107,7 @@ public class CityActivity extends Activity {
 					// Log.i(TAG , " searchcityV:"+searchcityV);
 					nowlists = myDbHelper.selectCity(searchcityV);// 根据关键字查询
 					ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-							CityActivity.this, R.layout.list_style, nowlists);
+							CityActivity.this, R.layout.cityoflist_style, nowlists);
 					searchlist.setAdapter(arrayAdapter);
 					searchlist
 							.setOnItemClickListener(new OnItemClickListener() {
@@ -156,23 +161,78 @@ public class CityActivity extends Activity {
 			}
 		});
 
-		hotcity11 = (TextView) findViewById(R.id.hotcity11);
-		hotcity11.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				String hotcityname11 = hotcity11.getText().toString();
-				addCity(hotcityname11);
-			}
-		});
-
 		/*
 		 * // 等待提示 dialog = new ProgressDialog(this);
 		 * dialog.setMessage("正在定位..."); dialog.setCancelable(true);
 		 * dialog.show();
 		 */
+		TextView hotcity11 = (TextView) findViewById(R.id.hotcity11);
+		hotcityarr(hotcity11);
+		TextView hotcity12 = (TextView) findViewById(R.id.hotcity12);
+		hotcityarr(hotcity12);
+		TextView hotcity13 = (TextView) findViewById(R.id.hotcity13);
+		hotcityarr(hotcity13);
+		TextView hotcity21 = (TextView) findViewById(R.id.hotcity21);
+		hotcityarr(hotcity21);
+		TextView hotcity22 = (TextView) findViewById(R.id.hotcity22);
+		hotcityarr(hotcity22);
+		TextView hotcity23 = (TextView) findViewById(R.id.hotcity23);
+		hotcityarr(hotcity23);
+		TextView hotcity31 = (TextView) findViewById(R.id.hotcity31);
+		hotcityarr(hotcity31);
+		TextView hotcity32 = (TextView) findViewById(R.id.hotcity32);
+		hotcityarr(hotcity32);
+		TextView hotcity33 = (TextView) findViewById(R.id.hotcity33);
+		hotcityarr(hotcity33);
+		TextView hotcity41 = (TextView) findViewById(R.id.hotcity41);
+		hotcityarr(hotcity41);
+		TextView hotcity42 = (TextView) findViewById(R.id.hotcity42);
+		hotcityarr(hotcity42);
+		TextView hotcity43 = (TextView) findViewById(R.id.hotcity43);
+		hotcityarr(hotcity43);
+		TextView hotcity51 = (TextView) findViewById(R.id.hotcity51);
+		hotcityarr(hotcity51);
+		TextView hotcity52 = (TextView) findViewById(R.id.hotcity52);
+		hotcityarr(hotcity52);
+		TextView hotcity53 = (TextView) findViewById(R.id.hotcity53);
+		hotcityarr(hotcity53);
+		TextView hotcity61 = (TextView) findViewById(R.id.hotcity61);
+		hotcityarr(hotcity61);
+		TextView hotcity62 = (TextView) findViewById(R.id.hotcity62);
+		hotcityarr(hotcity62);
+		TextView hotcity63 = (TextView) findViewById(R.id.hotcity63);
+		hotcityarr(hotcity63);
+		TextView hotcity71 = (TextView) findViewById(R.id.hotcity71);
+		hotcityarr(hotcity71);
+		TextView hotcity72 = (TextView) findViewById(R.id.hotcity72);
+		hotcityarr(hotcity72);
+		TextView hotcity73 = (TextView) findViewById(R.id.hotcity73);
+		hotcityarr(hotcity73);
+		TextView hotcity81 = (TextView) findViewById(R.id.hotcity81);
+		hotcityarr(hotcity81);
+		TextView hotcity82 = (TextView) findViewById(R.id.hotcity82);
+		hotcityarr(hotcity82);
+		TextView hotcity83 = (TextView) findViewById(R.id.hotcity83);
+		hotcityarr(hotcity83);
+		TextView hotcity91 = (TextView) findViewById(R.id.hotcity91);
+		hotcityarr(hotcity91);
+		TextView hotcity92 = (TextView) findViewById(R.id.hotcity92);
+		hotcityarr(hotcity92);
+		TextView hotcity93 = (TextView) findViewById(R.id.hotcity93);
+		hotcityarr(hotcity93);
+	}
 
+	public void hotcityarr(final TextView hotcity) {
+
+		hotcity.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String hotcityname = hotcity.getText().toString();
+				addCity(hotcityname);
+			}
+		});
 	}
 
 	public void addCity(String mycityname) {
@@ -207,6 +267,24 @@ public class CityActivity extends Activity {
 					.show();
 			searchcity.setText("");
 		}
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+			String areaid = sp2.getString("citycode", null);
+
+			if (areaid == null) {
+
+				Toast.makeText(CityActivity.this, "请添加一个城市", Toast.LENGTH_SHORT)
+						.show();
+			} else {
+				finish();
+			}
+			return true;
+
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	/*
@@ -256,10 +334,12 @@ public class CityActivity extends Activity {
 				sb.append("\ndistrict");
 				sb.append(location.getDistrict());
 				String locaCityName = location.getCity();
-				locaCityName = locaCityName.substring(0, locaCityName.length() - 1);
+				locaCityName = locaCityName.substring(0,
+						locaCityName.length() - 1);
 				String locaDistrictName = location.getDistrict();
-				if(locaDistrictName.length() >= 3){
-				locaDistrictName = locaDistrictName.substring(0, locaDistrictName.length() - 1);
+				if (locaDistrictName.length() >= 3) {
+					locaDistrictName = locaDistrictName.substring(0,
+							locaDistrictName.length() - 1);
 				}
 
 				String citycode = myDbHelper.queryOneData(locaDistrictName);
@@ -274,7 +354,7 @@ public class CityActivity extends Activity {
 			// logMsg(sb.toString());
 			Log.i("CCCC", sb.toString());
 			mLocationClient.stop();
-			
+
 		}
 	}
 

@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class WDataCache {
-
+  
 	static final String ID = "_id";
 	static final String City = "city";
 	static final String CityCode = "citycode";
@@ -91,9 +91,9 @@ public class WDataCache {
 	
 	
 	//delete a particular contact
-	public boolean deletemyWeatherDB(long rowId)
+	public boolean deletemyWeatherDB(String citycode)
 	{
-		return db.delete(DATABASE_TABLE, City + "=" +rowId, null) > 0;
+		return db.delete(DATABASE_TABLE, CityCode + "=" +citycode, null) > 0;
 	}
 	//Retrieves all the contacts
 	public Cursor getAllmyWeatherDB()

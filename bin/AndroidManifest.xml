@@ -65,12 +65,17 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="rxn98g9Sfax2XGFb7gKb60yl" />
- <!-- //key:开发者申请的key -->
+        <!-- //key:开发者申请的key -->
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" >
         </service>
+
+        <activity
+            android:name=".SharewearActivity"
+            android:label="@string/title_activity_sharewear" >
+        </activity>
     </application>
 
 </manifest>
