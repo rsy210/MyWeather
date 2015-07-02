@@ -32,13 +32,12 @@ import android.view.MenuItem;
 
 public class SharewearActivity extends Activity {
 
-	 String filePath = "C:/Users/Public/Pictures/Sample Pictures/考拉.jpg";// 测试写的文件路径，转换成自己的文件路径 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sharewear);
-		String myurl = "http://127.0.0.1:8000/media/";
+		String myurl = "http://192.168.100.107:8000/my/";
 		String uploadFile = Environment.getExternalStorageDirectory()+"/Penguins.jpg";
 		String newName = "rsy";
 		uploadFile(myurl,uploadFile,newName);
