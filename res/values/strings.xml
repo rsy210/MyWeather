@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_city">CityActivity</string>
     <string name="title_activity_sharewear">MainActivity</string>
+    <string name="title_activity_photo_pre">PhotoPreActivity</string>
 
 </resources>

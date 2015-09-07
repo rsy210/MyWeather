@@ -76,6 +76,10 @@
             android:name=".SharewearActivity"
             android:label="@string/title_activity_sharewear" >
         </activity>
+        <activity
+            android:name=".PhotoPreActivity"
+            android:label="@string/title_activity_photo_pre" >
+        </activity>
     </application>
 
 </manifest>

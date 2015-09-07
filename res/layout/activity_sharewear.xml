@@ -8,9 +8,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.hrbeu.myweather.SharewearActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
+  
+    <GridView  
+      android:id="@+id/mygridview"
+      android:numColumns="3"
+      android:gravity="center_horizontal"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:stretchMode="columnWidth"
+      />
+    <ImageView
+            android:id="@+id/test"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal" />
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/getCamera"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/getcamera" />
+    </LinearLayout>
 
 </RelativeLayout>

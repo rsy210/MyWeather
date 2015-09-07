@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/getcamera_popview"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:background="@drawable/camera_select"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/getcamera_pop"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:padding="8dp"
+        android:layout_margin="1dp"
+        android:textSize="15dp"
+         android:background="#50000000"
+         android:textColor="#FFFFFF"
+        android:text="拍照" 
+       />
+        <TextView
+        android:id="@+id/getphotos_pop"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+         android:gravity="center"
+        android:layout_centerInParent="true"
+         android:background="#50000000"
+        android:padding="8dp"
+        android:layout_margin="1dp"
+        android:textSize="15dp"
+        android:textColor="#FFFFFF"
+        android:text="从相册选择" 
+       />
+
+</LinearLayout>
